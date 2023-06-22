@@ -5,10 +5,11 @@ microbAIDeR is a R-package made for easy preliminar microbiome analyses starting
 
 # Installation
 
+```
 install.packages('devtools')
 devtools::install_github("https://github.com/FabbriniMarco/microbAIDeR.git")
 library(microbAIDeR)
-
+```
 
 
 # EXAMPLES
