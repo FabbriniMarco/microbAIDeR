@@ -5,7 +5,7 @@ microbAIDeR is a R-package made for easy preliminar microbiome analyses starting
 
 # Installation
 
-```
+```R
 install.packages('devtools')
 devtools::install_github("https://github.com/FabbriniMarco/microbAIDeR.git")
 library(microbAIDeR)
@@ -20,7 +20,7 @@ Depends: devtools, pairwiseAdonis, parallel, doParallel, openxlsx, tidyr, tibble
 
 # Alpha diversity boxplots
 
-```
+```R
 alpha <- read.delim("alpha.tsv", header = TRUE, row.names = 1)
 all( rownames(alpha) == rownames(map_file) )
 grouping = factor( map_file$grouping_factor, levels = c("Control", "T0", "T1") )
@@ -40,7 +40,7 @@ compute_wilcoxon_and_plot( data = as.data.frame(t(alpha)),
 ```
 
 # Composition boxplots
-```
+```R
 L2 = read.delim("L2_cleaned_table.tsv", header=T, row.names=1, sep='\t')
 # L2 is the otu table, filtered and with cleared rownams. Taxa on the rows, samples on the columns 
 all( colnames(L2) %in% rownames(map_file) )
@@ -59,7 +59,7 @@ compute_wilcoxon_and_plot( data = L2,
 
 
 # Beta diversity PcoA 
-```
+```R
 if(!dir.exists("Betadiv")){dir.create("Betadiv")}
 compute_beta_diversity( beta.folder.path="beta_diversity", 
                         save.path="Betadiv", 
