@@ -7,7 +7,9 @@ microbAIDeR is a R-package made for easy preliminar microbiome analyses starting
 # EXAMPLES
 
 
-# Alpha diversity boxplots ------------------------------------------------
+# Alpha diversity boxplots
+
+```
 alpha <- read.delim("alpha.tsv", header = TRUE, row.names = 1)
 all( rownames(alpha) == rownames(map_file) )
 grouping = factor( map_file$grouping_factor, levels = c("Control", "T0", "T1") )
@@ -24,8 +26,10 @@ compute_wilcoxon_and_plot( data = as.data.frame(t(alpha)),
                            save.path = "Alphadiv", 
                            signif.step.increase = 0.15, 
                            signif.text.size = 3 )
+```
 
-# Composition boxplots ------------------------------------------------------------
+# Composition boxplots
+```
 L2 = read.delim("L2_cleaned_table.tsv", header=T, row.names=1, sep='\t')
 # L2 is the otu table, filtered and with cleared rownams. Taxa on the rows, samples on the columns 
 all( colnames(L2) %in% rownames(map_file) )
@@ -40,11 +44,11 @@ compute_wilcoxon_and_plot( data = L2,
                            save.path = "Composition", 
                            color.grouping = color_grouping )
 # It works at L2 as at other levels, just input an otu table with clear taxa names in the rownames, a grouping factor matching the samples in the colnames and a color vector for each group
+```
 
 
-
-# Beta diversity PcoA -----------------------------------------------------
-
+# Beta diversity PcoA 
+```
 if(!dir.exists("Betadiv")){dir.create("Betadiv")}
 compute_beta_diversity( beta.folder.path="beta_diversity", 
                         save.path="Betadiv", 
@@ -58,5 +62,5 @@ compute_beta_diversity( beta.folder.path="beta_diversity",
                         group = grouping, 
                         adonis_n_perm = 9999,
                         sample.list = rownames(map_file) )
-
-# Feel free to explore the other functions, some of them are very useful!
+```
+Feel free to explore the other functions, some of them are very useful!
