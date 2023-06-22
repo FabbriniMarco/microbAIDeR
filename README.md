@@ -9,7 +9,10 @@ microbAIDeR is a R-package made for easy preliminar microbiome analyses starting
 install.packages('devtools')
 devtools::install_github("https://github.com/FabbriniMarco/microbAIDeR.git")
 library(microbAIDeR)
+microbAIDeR_install_dependancies() #To install all the packages that are necessary
 ```
+
+Depends: devtools, pairwiseAdonis, parallel, doParallel, openxlsx, tidyr, tibble, dplyr, ggplot2, ggsignif, gridExtra, tidyverse, stringr, vegan, cowplot, gtable
 
 
 # EXAMPLES
