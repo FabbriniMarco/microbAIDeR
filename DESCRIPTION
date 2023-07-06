@@ -1,7 +1,7 @@
 Package: microbAIDeR
 Type: Package
-Title: An ensemble of function for easier anc quicker preliminary microbiome analyses
-Version: 0.1.0
+Title: An ensemble of function for easier and quicker preliminary microbiome analysis
+Version: 0.1.1
 Author: c(person("Marco", "Fabbrini", role = c("aut", "cre"),
                      email = "m.fabbrini@unibo.it")
 Maintainer: Marco Fabbrini <m.fabbrini@unibo.it>
