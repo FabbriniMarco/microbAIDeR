@@ -81,7 +81,7 @@ sigFunc = function(x){
 addSheet <- function(path,sheet.name, addition, col.save=TRUE, row.save=TRUE, overwrite = TRUE){
    require(openxlsx)
    wb <- loadWorkbook(path)
-   if ( sheet.name %in% getSheetNames(wb) & overwrite ){ removeWorksheet(wb, sheet.name) }
+   if ( sheet.name %in% getSheetNames(path) & overwrite ){ removeWorksheet(wb, sheet.name) }
    addWorksheet(wb,sheet.name)
    writeData(wb,sheet.name, as.data.frame(addition), colNames = col.save, rowNames = row.save )
    saveWorkbook(wb,path,overwrite = TRUE)

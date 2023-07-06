@@ -33,7 +33,7 @@ A \bold{numeric} value that represent the threshold for filtering p-values. Only
 A \bold{numeric} value that represent the threshold for filtering corrected p-values. Only features or parameters with at least one multiple-comparison adjusted p-values strictly below this threshold will be kept in the corresponding output. Default = 0.05.
 }
   \item{min.corr.threshold}{
-A \bold{numeric} value that represent the threshold for filtering the correlation coefficient. Only features or parameters with at least one comparison with the absolute value of the correlation coefficient greater than this threshold will be kept in the corresponding output. This correlation coefficient filtering is applied only to the correlation table after adjusting p-values. Default = 0.03.
+A \bold{numeric} value that represent the threshold for filtering the correlation coefficient. Only features or parameters with at least one comparison with the absolute value of the correlation coefficient greater than this threshold will be kept in the corresponding output. This correlation coefficient filtering is applied only to the correlation table after adjusting p-values. Default = 0.3.
 }
   \item{force.numeric}{
 A \bold{logical} stating whether to force the input data to be numeric. Default = TRUE.
