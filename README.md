@@ -1,2 +1,2 @@
 # microbAIDeR
-An ensemble of function for easier anc quicker preliminary microbiome analyses
+An ensemble of functions for easier and quicker preliminary microbiome analyses
