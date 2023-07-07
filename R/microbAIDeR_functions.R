@@ -151,12 +151,23 @@ compute_wilcoxon_and_plot <- function(data, p.adjust.method = "fdr", group, taxl
    require(pairwiseAdonis)
    require(stringr)
 
+   if(!dir.exists(save.path)){dir.create(save.path)}
+
    if ( any(is.na(group))){
       data = data[,!is.na(group)]
       group = group[!is.na(group)]
    }
 
    data = data[!rowSums(data) %in% 0,]
+
+   kw <- rep(NA, nrow(data))
+   for( i in 1:nrow(data))
+   {
+      kw[i] = kruskal.test( as.numeric(data[i,]) , group )$p.value
+   }
+   kw[is.nan(kw)] = 1
+   kw[is.na(kw)] = 1
+   data = data[order(kw),]
 
    gvec <- vector("list",length=0 )
    gvec_corr <- vector("list",length=0 )
@@ -289,14 +300,16 @@ compute_wilcoxon_and_plot <- function(data, p.adjust.method = "fdr", group, taxl
       print(paste("Saving plots to ", save.path, "/", taxlevel, "_boxplot_wilcox_uncorrected_smooth.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/", taxlevel, "_boxplot_wilcox_uncorrected_smooth.pdf", sep="") ,
-         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    } else {
       print(paste("Saving plots to ", save.path, "/", taxlevel, "_boxplot_wilcox_uncorrected.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/", taxlevel, "_boxplot_wilcox_uncorrected.pdf", sep="") ,
-         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    }
@@ -308,14 +321,16 @@ compute_wilcoxon_and_plot <- function(data, p.adjust.method = "fdr", group, taxl
          print(paste("Saving plots to ", save.path, "/", taxlevel, "_boxplot_wilcox_", p.adjust.method, "_smooth.pdf", sep=""))
          suppressWarnings(ggsave(
             filename = paste(save.path, "/", taxlevel, "_boxplot_wilcox_", p.adjust.method, "_smooth.pdf", sep=""),
-            plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+            plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                                layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
             width = width.graph, height = height.graph, dpi = 330
          ))
       } else {
          print(paste("Saving plots to ", save.path, "/", taxlevel, "_boxplot_wilcox_", p.adjust.method, ".pdf", sep=""))
          suppressWarnings(ggsave(
             filename = paste(save.path, "/", taxlevel, "_boxplot_wilcox_", p.adjust.method, ".pdf", sep=""),
-            plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+            plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                                layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
             width = width.graph, height = height.graph, dpi = 330
          ))
       }
@@ -348,6 +363,8 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       stop()
    }
 
+   if(!dir.exists(save.path)){dir.create(save.path)}
+
    call.print = as.data.frame(rbind( paste(beta_metrics, collapse=", "), color.grouping = paste(color.grouping, collapse = ", "),
                                      save.path, adonis_n_perm , beta.folder.path ,  mds = paste(mds, collapse=", ") ,
                                      spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , smoothing.color, contrast.color,
@@ -369,10 +386,10 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
    for ( metrics in beta_metrics)
    {
       print(paste("Running", toupper(metrics), "beta diversity analyses"))
-      if (!is.null(manual.beta.path))
+      if (is.null(manual.beta.path))
       {
          beta = read.delim( paste(beta.folder.path , metrics, "distance-matrix.tsv", sep="/"), header=T, row.names=1, sep="\t")
-      } else if( is.null(manual.beta.path))
+      } else if( !is.null(manual.beta.path))
       {
          beta = read.delim( manual.beta.path, header=T, row.names=1, sep="\t")
       }
@@ -560,14 +577,16 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       print(paste("Saving plots to ", save.path, "/beta_intragroup_variance_smooth.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/beta_intragroup_variance_smooth.pdf", sep="") ,
-         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    } else {
       print(paste("Saving plots to ", save.path, "/beta_intragroup_variance.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/beta_intragroup_variance.pdf", sep="") ,
-         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    }
@@ -576,14 +595,16 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       print(paste("Saving plots to ", save.path, "/beta_", wilcoxon.p.adjust, "_intragroup_variance_smooth.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/beta_", wilcoxon.p.adjust, "_intragroup_variance_smooth.pdf", sep=""),
-         plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    } else {
       print(paste("Saving plots to ", save.path, "/beta_", wilcoxon.p.adjust, "_intragroup_variance.pdf", sep=""))
       suppressWarnings(ggsave(
          filename = paste(save.path, "/beta_", wilcoxon.p.adjust, "_intragroup_variance.pdf", sep=""),
-         plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ),
+         plot = marrangeGrob(gvec_corr, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
+                             layout_matrix = matrix(seq_len(nrow.graph*ncol.graph), nrow = nrow.graph, ncol = ncol.graph , byrow = TRUE) ),
          width = width.graph, height = height.graph, dpi = 330
       ))
    }
@@ -683,11 +704,11 @@ se.avg <- function(x){
 flattenCorrMatrix <- function(cormat, pmat) {
    ut <- upper.tri(cormat)
    df = data.frame(
-         row = rownames(cormat)[row(cormat)[ut]],
-         column = rownames(cormat)[col(cormat)[ut]],
-         cor  =(cormat)[ut],
-         p = pmat[ut]
-      )
+      row = rownames(cormat)[row(cormat)[ut]],
+      column = rownames(cormat)[col(cormat)[ut]],
+      cor  =(cormat)[ut],
+      p = pmat[ut]
+   )
    return(df)
 }
 
@@ -824,11 +845,11 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
    }
    # Keep only uncorrected significant comparisons
    nosig_tax = rowSums(ptab < uncorr.p.threshold) == 0
-   ptab = ptab %>% filter( !nosig_tax )
-   cortab = cortab %>% filter( !nosig_tax )
+   ptab = ptab %>% dplyr::filter( !nosig_tax )
+   cortab = cortab %>% dplyr::filter( !nosig_tax )
    nosig_param = colSums(ptab < uncorr.p.threshold) == 0
-   ptab = ptab %>% select( all_of(names(nosig_param)[!nosig_param]) )
-   cortab = cortab %>% select( all_of(names(nosig_param)[!nosig_param]) )
+   ptab = ptab %>% dplyr::select( names(nosig_param)[!nosig_param]  )
+   cortab = cortab %>% dplyr::select( names(nosig_param)[!nosig_param] )
    if ( all(dim(cortab) < c(2,2)) )
    {
       print("Done!")
@@ -841,12 +862,12 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
    for (i in 1:ncol(p2)){ p2[,i] = p.adjust(p2[,i], method = p.adjust.method, n = nrow(ptab) )}
    nosig_tax = rowSums(p2 < corr.p.threshold) == 0
    if( sum(!nosig_tax) == 0 ){print(paste("No significant correlation correcting pvalues")) ; return( list(uncorr_correlation=cortab, uncorr_pvalues = ptab) ) ; stop()}
-   p2 = p2 %>% filter( !nosig_tax )
-   c2 = c2 %>% filter( !nosig_tax )
+   p2 = p2 %>% dplyr::filter( !nosig_tax )
+   c2 = c2 %>% dplyr::filter( !nosig_tax )
    nosig_param = colSums(p2 < corr.p.threshold) == 0
    if( sum(!nosig_param) == 0 ){print(paste("No significant correlation correcting pvalues")) ; return( list(uncorr_correlation=cortab, uncorr_pvalues = ptab) ) ; stop()}
-   p2 = p2 %>% select( all_of(names(nosig_param)[!nosig_param]) )
-   c2 = c2 %>% select( all_of(names(nosig_param)[!nosig_param]) )
+   p2 = p2 %>% dplyr::select( names(nosig_param)[!nosig_param] )
+   c2 = c2 %>% dplyr::select( names(nosig_param)[!nosig_param] )
    if ( any(dim(c2) == 1) )
    {
       print(paste("Done!"))
@@ -862,12 +883,12 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
    ctemp = c3
    ctemp[p3 >= corr.p.threshold] = NA
    nostrong_tax = rowSums( abs(ctemp) >= min.corr.threshold, na.rm = TRUE ) == 0
-   p3 = p3 %>% filter( !nostrong_tax )
-   c3 = c3 %>% filter( !nostrong_tax )
-   ctemp = ctemp %>% filter( !nostrong_tax )
+   p3 = p3 %>% dplyr::filter( !nostrong_tax )
+   c3 = c3 %>% dplyr::filter( !nostrong_tax )
+   ctemp = ctemp %>% dplyr::filter( !nostrong_tax )
    nostrong_param = colSums( abs(ctemp) >= min.corr.threshold, na.rm = TRUE ) == 0
-   p3 = p3  %>% select( all_of(names(nostrong_param)[!nostrong_param]) )
-   c3 = c3 %>% select( all_of(names(nostrong_param)[!nostrong_param]) )
+   p3 = p3  %>% dplyr::select(names(nostrong_param)[!nostrong_param] )
+   c3 = c3 %>% dplyr::select( names(nostrong_param)[!nostrong_param] )
 
 
    cor_out = list(uncorr_correlation = cortab, uncorr_pvalues = ptab,
@@ -890,3 +911,10 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
 
 
 }
+
+
+
+scaling.manual <- function(x, range.min, range.max) {
+   return(range.min + (x-min(x))*(range.max-range.min)/(max(x)-min(x)))
+}
+

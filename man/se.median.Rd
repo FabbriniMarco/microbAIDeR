@@ -2,10 +2,10 @@
 \alias{se.avg}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Compute the standard error of the mean
+Compute the standard error of the median
 }
 \description{
-Computes the standard error of the mean
+Computes the standard error of the median
 }
 \usage{
 se.avg(x, na.rm = TRUE)
@@ -13,7 +13,7 @@ se.avg(x, na.rm = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-A \bold{numeric} vactor containing the values of the distribution we want to compute the standard error of the mean of. Can contain NAs, which will be removed.
+A \bold{numeric} vactor containing the values of the distribution we want to compute the standard error of the median of. Can contain NAs, which will be removed.
 }
   \item{na.rm}{
 %%     ~~Describe \code{na.rm} here~~
@@ -45,18 +45,10 @@ Marco Fabbrini - m.fabbrini@unibo.it
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+distrib = runif(200, min = 3, max = 6)
 
-## The function is currently defined as
-function (x, na.rm = TRUE)
-{
-    if (na.rm) {
-        x = x[!is.na(x)]
-    }
-    sd(x)/sqrt(length(x))
-  }
+se.median(distrib)
+# [1] 0.1346104
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):
