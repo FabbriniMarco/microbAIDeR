@@ -2,10 +2,10 @@
 \alias{sem}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Compute standard error of the median
+Compute standard error of the mean
 }
 \description{
-Compute standard error of the median (SEM)
+Compute standard error of the mean (SEM)
 }
 \usage{
 sem(x)
