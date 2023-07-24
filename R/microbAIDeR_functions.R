@@ -695,9 +695,10 @@ sem <- function(x) {
 }
 
 
-se.avg <- function(x){
+se.median <- function(x){
    x = x[!is.na(x)]
-   sd(x) / sqrt(length(x))
+   se.med <- 1.2533 * iqr / sqrt(length(x))
+   return(se.med)
 }
 
 
