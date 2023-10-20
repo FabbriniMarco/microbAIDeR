@@ -34,4 +34,5 @@ If you use this R package please cite this GitHub in your article:
 }
 
 Example: Fabbrini, M. & Conti, G.,(2023) microbAIDeR - An ensemble of functions for easier and quicker preliminary microbiome analyses. Available on Github: https://github.com/FabbriniMarco/microbAIDeR/
+
 ```
