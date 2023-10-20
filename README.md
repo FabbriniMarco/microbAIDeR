@@ -27,9 +27,11 @@ If you use this R package please cite this GitHub in your article:
 ```
 @Manual{,
   title = {microbAIDeR: An ensemble of functions for easier and quicker preliminary microbiome analyses},
-  author = {Marco Fabbrini},
+  author = {Marco Fabbrini, Gabriele Conti},
   year = {2023},
-  note = {R package version 0.1.1},
+  note = {R package version 0.1.2},
   url = {https://github.com/FabbriniMarco/microbAIDeR.git},
 }
+
+Example: Fabbrini, M. & Conti, G.,(2023) microbAIDeR - An ensemble of functions for easier and quicker preliminary microbiome analyses. Available on Github: https://github.com/FabbriniMarco/microbAIDeR/
 ```
