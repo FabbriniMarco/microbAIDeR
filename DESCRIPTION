@@ -1,7 +1,7 @@
 Package: microbAIDeR
 Type: Package
 Title: An ensemble of functions for easier and quicker preliminary microbiome analysis
-Version: 0.1.2
+Version: 0.2.0
 Author: Marco Fabbrini <fabbrinimarco.mf@gmail.com>, Gabriele Conti
 Maintainer: Marco Fabbrini <fabbrinimarco.mf@gmail.com>
 Description: An ensemble of functions for easier and quicker preliminary microbiome analyses 
