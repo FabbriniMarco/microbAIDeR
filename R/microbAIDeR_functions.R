@@ -1,4 +1,4 @@
-microbAIDeR_install_dependancies <- function(){
+microbAIDeR_install_dependencies <- function(){
    install.packages('devtools')
    devtools::install_github("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
    install.packages("parallel")
@@ -78,15 +78,30 @@ tidify <- function(x, as.numeric = TRUE){
 }
 
 
-sigFunction = function(x){
-   if ( !is.na(x)){
-      if(x <= 0.0001){"****"}
-      else if(x <= 0.001){"***"}
-      else if(x <= 0.01){"**"}
-      else if(x <= 0.05){"*"}
-      else if(trends & x <= 0.1){"°"}
-      else{NA}
-   } else {NA}
+sigFunction = function(x) {
+   if (!is.na(x)) {
+      if (x <= 1e-04) {
+         "****"
+      }
+      else if (x <= 0.001) {
+         "***"
+      }
+      else if (x <= 0.01) {
+         "**"
+      }
+      else if (x <= 0.05) {
+         "*"
+      }
+      else if (exists("trends") && trends && x <= 1) {
+         "°"
+      }
+      else {
+         NA
+      }
+   }
+   else {
+      NA
+   }
 }
 
 
@@ -545,7 +560,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
 
    call.print = as.data.frame(rbind( paste(beta_metrics, collapse=", "), color.grouping = paste(color.grouping, collapse = ", "),
                                      save.path, adonis_n_perm , beta.folder.path ,  mds = paste(mds, collapse=", ") ,
-                                     spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , smoothing.color, contrast.color,
+                                     spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha ,
                                      svg.width , svg.height ,
                                      cex.points , adonis.p.adjust, wilcoxon.p.adjust, additional.params=paste(additional.params, collapse=", ")
    ))
