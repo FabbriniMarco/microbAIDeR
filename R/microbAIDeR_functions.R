@@ -591,7 +591,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
 
    call.print = as.data.frame(rbind( paste(beta_metrics, collapse=", "), color.grouping = paste(color.grouping, collapse = ", "),
                                      save.path, adonis_n_perm , beta.folder.path ,  mds = paste(mds, collapse=", ") ,
-                                     spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , contrast.color,
+                                     spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , 
                                      svg.width , svg.height ,
                                      cex.points , adonis.p.adjust, wilcoxon.p.adjust, additional.params=paste(additional.params, collapse=", ")
    ))
