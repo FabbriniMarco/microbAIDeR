@@ -398,14 +398,14 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
       ############ Uncorrected boxplots
       if ( !is.null(onlysig) | plot.not.sig ) {
          suppressWarnings(graphy <- ggplot( data=tempdf, aes(x=grouping_column, y=as.numeric(abundances)) )+
-                             geom_boxplot( aes(fill=grouping_column),outlier.shape = NA, lwd = 0.4) +
+                             geom_boxplot( aes(fill=grouping_column),outlier.shape = NA, lwd = box.lwd) +
                              geom_jitter( aes(color=grouping_column), width = 0.1, height=0, pch = jitter.pch, color=jitter.color, stroke = jitter.stroke, size = jitter.size)+ {
                                 if (!is.null(onlysig))
                                    geom_signif(comparisons = strsplit(onlysig$V1, split = " vs "),
                                                annotations = sapply(onlysig$V2, sigFunction, trends = trends),
-                                               size = 0.4,
-                                               tip_length = 0.02, color = "grey22", textsize = 3.5,
-                                               margin_top = 0.05, vjust = 0.5, step_increase = 0.12)
+                                               size = signif.line.size,
+                                               tip_length = 0.02, color = "grey22", textsize = signif.text.size,
+                                               margin_top = 0.05, vjust = 0.5, step_increase = signif.step.increase)
                              } +
                              {if (smoothing)
                                 geom_smooth(aes(x=microbAIDeR::tokenize(grouping_column)), method=smoothing.method, lwd=smoothing.lwd, color=contrast.color, se=smoothing.se, formula = 'y ~ x' )
@@ -464,14 +464,14 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
          ############ Uncorrected boxplots
          if ( !is.null(onlysig_corrected) | plot.not.sig ) {
             suppressWarnings(graphy <- ggplot( data=tempdf, aes(x=grouping_column, y=as.numeric(abundances)) )+
-                                geom_boxplot( aes(fill=grouping_column),outlier.shape = NA, lwd = 0.4) +
+                                geom_boxplot( aes(fill=grouping_column),outlier.shape = NA, lwd = box.lwd) +
                                 geom_jitter( aes(color=grouping_column), width = 0.1, height=0, pch = jitter.pch, color=jitter.color, stroke = jitter.stroke, size = jitter.size)+ {
                                    if (!is.null(onlysig_corrected))
                                       geom_signif(comparisons = strsplit(onlysig_corrected$V1, split = " vs "),
                                                   annotations = sapply(onlysig_corrected$V2, sigFunction, trends = trends),
-                                                  size = 0.4,
-                                                  tip_length = 0.02, color = "grey22", textsize = 3.5,
-                                                  margin_top = 0.05, vjust = 0.5, step_increase = 0.12)
+                                                  size = signif.line.size,
+                                                  tip_length = 0.02, color = "grey22", textsize = signif.text.size,
+                                                  margin_top = 0.05, vjust = 0.5, step_increase = signif.step.increase)
                                 } +
                                 {if (smoothing)
                                    geom_smooth(aes(x=microbAIDeR::tokenize(grouping_column)), method=smoothing.method, lwd=smoothing.lwd, color=contrast.color, se=smoothing.se, formula = 'y ~ x' )
