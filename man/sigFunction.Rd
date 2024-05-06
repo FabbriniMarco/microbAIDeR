@@ -1,5 +1,5 @@
-\name{sigFunc}
-\alias{sigFunc}
+\name{sigFunction}
+\alias{sigFunction}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Convert a P-value into symbolic pinpoint
@@ -9,12 +9,15 @@ This function converts a single \bold{numeric} P-value into a character of encod
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-sigFunc(x)
+sigFunction(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
   A \bold{numeric} object
+}
+  \item{trends}{
+  A \bold{logical} flag not to be passed internally to the function but checked in the Environment during runtime. If set to FALSE, the function will not return any symbols for P-values <= 0.1.
 }
 }
 \details{
@@ -36,45 +39,47 @@ If a NA is passed to the function, a NA is given. \cr
 Marco Fabbrini - m.fabbrini@unibo.it
 }
 \examples{
-> sigFunc(0.3)
+> sigFunction(0.3)
 [1] NA
 
-> sigFunc(0.1)
+> sigFunction(0.1)
 [1] "°"
 
-> sigFunc(0.06)
+> sigFunction(0.06)
 [1] "°"
 
-> sigFunc(0.05)
+> sigFunction(0.05)
 [1] "*"
 
-> sigFunc(0.03)
+> sigFunction(0.03)
 [1] "*"
 
-> sigFunc(0.01)
+> sigFunction(0.01)
 [1] "**"
 
-> sigFunc(0.007)
+> sigFunction(0.007)
 [1] "**"
 
-> sigFunc(0.001)
+> sigFunction(0.001)
 [1] "***"
 
-> sigFunc(0.0005)
+> sigFunction(0.0005)
 [1] "***"
 
-> sigFunc(0.0001)
+> sigFunction(0.0001)
 [1] "****"
 
-> sigFunc(2.3e-14)
+> sigFunction(2.3e-14)
 [1] "****"
 
-
-Apply the conversion to a numeric vector of P-values
+#Apply the conversion to a numeric vector of P-values
 > p_list = c(0.3, 0.1, 0.06, 0.05, 0.03, 0.01, 0.005, 0.001, 0.0001, 1.3e-10)
 
-> sapply(p_list, sigFunc)
+> sapply(p_list, sigFunction)
 [1] NA     "°"     "°"    "*"    "*"    "**"    "**"   "***"   "****"  "****"
+
+> trends = FALSE; sigFunction(0.1)
+[1] NA
 
 }
 

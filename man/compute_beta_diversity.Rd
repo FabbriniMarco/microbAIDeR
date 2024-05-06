@@ -5,7 +5,7 @@
 Quickly compute MDS analyses starting from beta diversity matrices output of the QIIME2 pipeline (ideally qiime2_multipipeline)
 }
 \description{
-This function automatically computes beta diversity analyses performind MDS, plotting PCoA, testing inter-group distances with pairwise-PERMANOVA and intra-group distances in beta diversity with pairwise Wilcoxon testing.
+This function automatically computes beta diversity analyses performind MDS, plotting PCoA, testing inter-group differences with pairwise-PERMANOVA and intra-group variance.
 }
 \usage{
 compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity", sep="/"), \cr
@@ -18,16 +18,11 @@ compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity
         spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE, ellipse.fill = FALSE, \cr
         ellipse.lwd = 2.5, ellipse.conf = 0.95, ellipse.alpha = 0.75, manual.bordercol = NULL,\cr
         svg.width = 7, svg.height = 5, \cr
-        cex.plot = 1.3, width.graph = 6, height.graph = 4, \cr
+        cex.points = 1.2, width.graph = 6, height.graph = 4, \cr
         ggplot.margins = c(0.1, 0.1, 0.1, 0.5), \cr
         nrow.graph = 2, ncol.graph = 2, \cr
-        box.lwd = 0.4, jitter.pch = 21, jitter.stroke = 0.15, \cr
-        jitter.size = 0.7, jitter.color = "grey22", \cr
-        signif.step.increase = 0.12, signif.text.size = 3.5, signif.line.size = 0.4, \cr
         text.x.size = 8, text.y.size = 7, text.title.size = 9, \cr
-        smoothing = FALSE, smoothing.lwd = 1, smoothing.color = "darkred", \cr
-        smoothing.se = FALSE, smoothing.method = "loess", contrast.color = "ivory1",
-        additional.params = NULL, align.legend = FALSE)
+        additional.params = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,10 +40,10 @@ A \bold{character} string pointing to the PATH to a TSV distance matrix to use \
 A \bold{character} string pointing to the output folder where all the graphs and output files will be stored (Default = current working directory).
 }
   \item{group}{
-A \bold{factor} of \emph{length(group) == length(sample.list)}. The level order would be the one appearing in the X-axis of the plotted boxplots for intra-group distances.
+A \bold{factor} of \emph{length(group) == length(sample.list)}. The level order would be the one appearing in the X-axis of the plotted barplots for intra-group distances.
 }
   \item{color.grouping}{
-A \bold{vector} of \emph{length(color.grouping) == nlevels(group)} specifying for each group a color for the PCoA points fill and intra-group beta boxplot fill (either color names or RGB HEX codes).
+A \bold{vector} of \emph{length(color.grouping) == nlevels(group)} specifying for each group a color for the PCoA points fill and intra-group beta barplot fill (either color names or RGB HEX codes).
 }
   \item{sample.list}{
 A \bold{character} vector containing the sample names that we want to analyze. \cr
@@ -72,12 +67,7 @@ A \bold{character} value pointing to the P-value correction method for the pairw
 Please note that in case of a two-group beta diversity analysis, the reported corrected P-values would be the same of the uncorrected ones.
 }
   \item{wilcoxon.p.adjust}{
-A \bold{character} value pointing to the P-value correction method for the pairwise Wilcoxon testing for the intra-group distances (Default = "fdr"). Can be any value from p.adjust.methods.\cr
-
-Please note that in case of a two-group beta diversity analysis, the reported corrected P-values would be the same of the uncorrected ones.
-}
-  \item{plot.not.sig}{
-A \bold{logical} (Default = FALSE), specifying whether to plot also intra-group beta distances boxplots with no significant pairwise Wilcox test differences.
+A \bold{character} value pointing to the P-value correction method for the pairwise Wilcoxon testing for the intra-group variance (Default = "fdr"). Can be any value from p.adjust.methods.\cr
 }
   \item{spiders}{
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with spiders.
@@ -112,110 +102,63 @@ If NULL, ellipse border colors are assigned from the \emph{color.grouping} varia
   \item{svg.height}{
 \bold{numeric} value of the height for output PCoA plots in scalable vector graphics format (Default = 5).
 }
-  \item{cex.plot}{
+  \item{cex.points}{
 A \bold{numeric} value passing the size of PCoA data points.
 }
   \item{width.graph}{
-A \bold{numerical} value specifying the width of intra-group beta box plots (Default = 6).
+A \bold{numerical} value specifying the width of intra-group beta barplots (Default = 6).
 }
   \item{height.graph}{
-A \bold{numerical} value specifying the height of intra-group beta box plots (Default = 4).
+A \bold{numerical} value specifying the height of intra-group beta barplots (Default = 4).
 }
   \item{ggplot.margins}{
-Concatenation of four \bold{numeric} values passed to \emph{ggplot} for handling the margins of each intra-group beta boxplot (Default = c(0.1, 0.1, 0.1, 0.5)).
+Concatenation of four \bold{numeric} values passed to \emph{ggplot} for handling the margins of each intra-group beta barplot (Default = c(0.1, 0.1, 0.1, 0.5)).
 }
   \item{nrow.graph}{
-Number of rows of the output .pdf file (Default = 2). Used to group multiple boxplots in the same sheet.
+Number of rows of the output .pdf file (Default = 2). Used to group multiple barplots in the same sheet.
 }
   \item{ncol.graph}{
-Number of columns of the output .pdf file (Default = 2). Used to group multiple boxplots in the same sheet.
-}
-  \item{box.lwd}{
-A \bold{numeric} value to adjust line width of boxplots (Default = 0.4).
-}
-  \item{jitter.pch}{
-A \bold{numeric} value setting the shape of the jittered points over the boxplot (Default = 21).
-}
-  \item{jitter.stroke}{
-A \bold{numeric} value setting the width of each jitter point border (Default = 0.15). Set both this and \emph{jitter.size} to 0 in order to avoid plotting jitter over boxplots.
-}
-  \item{jitter.size}{
-A \bold{numeric} value setting the diameter of each jitter point (Default = 0.7). Set both this and \emph{jitter.stroke} to 0 in order to avoid plotting jitter over boxplots.
-}
-  \item{jitter.color}{
-A \bold{character} specifying the color of each jitter border (Default = "grey22")
-}
-  \item{signif.step.increase}{
-A \bold{numeric} value handling the distance between each sig bar plotted by ggsignif (Default = 0.12).
-}
-  \item{signif.text.size}{
-A \bold{numeric} value setting the font size of statistical significance symbols over sig bars (Default = 3.5).
-}
-  \item{signif.line.size}{
-A \bold{numeric} value setting the width of the lines of the significance bracket (Default = 0.4).
+Number of columns of the output .pdf file (Default = 2). Used to group multiple barplots in the same sheet.
 }
   \item{text.x.size}{
-A \bold{numeric} value setting X-axis font size for boxplots (Default = 8).
+A \bold{numeric} value setting X-axis font size for barplots (Default = 8).
 }
   \item{text.y.size}{
-A \bold{numeric} value setting Y-axis font size for boxplots (Default = 7).
+A \bold{numeric} value setting Y-axis font size for barplots (Default = 7).
 }
   \item{text.title.size}{
-A \bold{numeric} value setting title font size for boxplots (Default = 9).
-}
-  \item{smoothing}{
-A \bold{logical} describing whether to plot the smoothed conditional means with \emph{geom_smooth()} over the boxplots (Default = FALSE).
-}
-  \item{smoothing.lwd}{
-If \emph{smoothing = TRUE}, this set the line width of the smoothing line (Default = 1).
-}
-  \item{smoothing.color}{
-If \emph{smoothing = TRUE},this set the line color of the smoothing line (Default = "darkred").
-}
-  \item{smoothing.se}{
-If \emph{smoothing = TRUE}, this \bold{logical} specify whether to plot the confidence interval shadow (Default = FALSE).
-}
-  \item{smoothing.method}{
-If \emph{smoothing = TRUE}, this parameter handles the method used to compute the smoothing (Default = "loess").\cr Accepts a character vector, e.g. "lm", "glm", "gam", "loess" or a function, e.g. MASS::rlm or mgcv::gam, stats::lm, or stats::loess
-}
-  \item{contrast.color}{
-If \emph{smoothing = TRUE}, this \bold{character} specify the color used to contrast the borders of \bold{smoothing.color} (Default = "ivory1").
+A \bold{numeric} value setting title font size for barplots (Default = 9).
 }
   \item{additional.params}{
 An object of class \bold{gg} (a ggplot object, function, or parameter) to be passed at the end of each ggplot code in the script. \cr
-This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Defauult = NULL). \cr
+This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Default = NULL). \cr
 Example: additional.params = theme(panel.background = element_rect(fill="ivory1"))
-  }
-  \item{align.legend}{
-A \bold{logical} stating whether to center align the legend title to the legend elements in inter-beta variance boxplots. Only applicable if \emph{legend.position}!="none" is passed via \bold{additional.params}, otherwise legend is not plotted as default (Default = FALSE).
   }
 }
 \details{
-Note that in case of a two-group analysis, the corrected and uncorrected P-values of this script are identical. In case you decide to report multiple beta metrics in the same work, consider adjusting the P-values according to the \emph{n} metrics included.
-In case of multiple (\emph{n}>2) group analysis, the correction of tha P-values is made only within the intra-metrics pairwise comparisons.\cr
-
-If additional metrics were computed, the script can perform the analyses with no problems. Simply place the beta diversity squared matrix named \emph{distance-matrix.tsv} inside a folder named according to the string passed to \bold{beta_metrics}.
+If additional distance metrics were computed by the user, the script can perform the analyses with no problems. Simply place the beta diversity squared matrix named \emph{distance-matrix.tsv} inside a folder named according to the string passed to \bold{beta_metrics}.
 
 }
 \value{
-The script produces up to 4 PCoA SVG plots for each metrics, as well as two PDF files containing intra-group beta boxplots and an Excel file with all pairwise Adonis P-values:
+The script produces up to 4 PCoA SVG plots for each metrics, as well as one PDF files containing intra-group beta barplots, an Excel file with all pairwise Adonis P-values and an excel file with intra-group variance P-values and IQR values:
 
 \item{'beta_metrics'*.svg }{
 For each metric found in the \bold{beta.folder.path} and passed to the \bold{beta_metrics} parameter, at least a PCoA plot is produced in SVG format. For each TRUE logical passed to one of the \bold{ellipses}, \bold{ellipses.focus} or \bold{ellipses.fill} parameters, an additional SVG plot is produced and named accordingly.
 }
 \item{beta_intragroup_variance.pdf }{
-A 330dpi PDF file with intra-group beta distances boxplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
-A single boxplot is computed for each metrics. If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significant pairwise Wilcoxon comparison according to uncorrected P-values are plotted.
+A 330dpi PDF file with intra-group beta distances barplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
+Three barplots are computed for each metrics (variance, IQR, Range).
 }
-\item{beta_'wilcoxon.p.adjust'_intragroup_variance.pdf }{
-A 330dpi PDF file with intra-group beta distances boxplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
-A single boxplot is computed for each metrics. If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significant pairwise Wilcoxon comparison according to corrected P-values are plotted. Note that in case of a two-group analysis this file would be identical to the previous one as no P-value correction occurs with a single comparison.
-}
-
 \item{beta_adonis.xlsx }{
 An Excel file with several sheets:\cr
 1. The \bold{call} sheet contains the parameters passed to the function. It's useful for future edits on the code to remember which colours have been used in the plot, as well as the other graphical parameters and correction method.\cr
-\emph{n}. Each of the other sheets takes the name of a metric and reports the Adonis P-values for each pairwise comparison. In case of a two-group analysis, the corrected P-values are the same of the uncorrected ones. For multi-group analyses, P-values are adjusted according to the number of pairwise comparisons computed for each matric individually.
+\emph{n}. Each of the other sheets takes the name of a metric and reports the Adonis P-values for each pairwise comparison. For multi-group analyses, P-values are adjusted according to the number of pairwise comparisons computed for each metric individually.
+}
+\item{beta_variance.xlsx }{
+An Excel file with several sheets:\cr
+1. The \bold{call} sheet contains the parameters passed to the function. It's useful for future edits on the code to remember which colours have been used in the plot, as well as the other graphical parameters and correction method.\cr
+2. \emph{metric}-Var. Contains the Variance, IQR and Range values plotted in the barplots
+3. \emph{metric}-p. Contains the Wilcoxon and Kruskal P-values of the comparison between the group's distances distributions.
 }
 
 }

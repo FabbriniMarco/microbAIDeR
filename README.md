@@ -13,7 +13,7 @@ library(microbAIDeR)
 microbAIDeR_install_dependancies() #To install all the packages that are necessary
 ```
 
-Depends: devtools, pairwiseAdonis, parallel, doParallel, openxlsx, tidyr, tibble, dplyr, ggplot2, ggsignif, gridExtra, tidyverse, stringr, vegan, cowplot, gtable
+Depends: devtools, pairwiseAdonis, parallel, doParallel, openxlsx, tidyr, tibble, dplyr, ggplot2, ggsignif, gridExtra, tidyverse, stringr, vegan, cowplot, gtable, grid
 
 
 # Examples
@@ -29,7 +29,7 @@ If you use this R package please cite this GitHub in your article:
   title = {microbAIDeR: An ensemble of functions for easier and quicker preliminary microbiome analyses},
   author = {Marco Fabbrini, Gabriele Conti},
   year = {2023},
-  note = {R package version 0.1.2},
+  note = {R package version 0.2.1},
   url = {https://github.com/FabbriniMarco/microbAIDeR.git},
 }
 

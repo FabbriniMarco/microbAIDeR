@@ -8,8 +8,8 @@ Quickly generate boxplots with tested pairwise Wilcoxon test significance betwee
 This function handles non-tidy data.frames (e.g. OTU tables or alpha diversity tables) and produces one boxplot per each parameters found in the rownames, testing the pairwise wilcoxon differences between the observation found in the colnames of the input data.frame, grouped by a grouping factor
 }
 \usage{
-compute_wilcoxon_and_plot(data, group, taxlevel,save.path = getwd(), color.grouping, \cr
-    p.adjust.method = "fdr", plot.not.sig = FALSE, \cr
+compute_wilcoxon_and_plot(data, group, taxlevel,save.path = getwd(), color.grouping, comparison.list=NULL, \cr
+    p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE, paired=FALSE, \cr
     nrow.graph = 2, ncol.graph = 2, width.graph = 6, height.graph = 4, \cr
     horiz = FALSE, ggplot.margins = c(0.18, 0.18, 0.18, 0.6), box.lwd = 0.4, \cr
     jitter.pch = 21, jitter.stroke = 0.15, jitter.size = 0.7, jitter.color = "grey22", \cr
@@ -29,7 +29,7 @@ A \bold{factor} of \emph{length(group) == ncol(data)}. The level order would be 
 }
   \item{taxlevel}{
 A prefix to append to file names, to pinpoint for exampl at which level the analysis was computed (e.g., "L2", "L5", "L6") or a name of choice. \cr
-Output file names start with this text.
+Output file names start with this text. Use shorts names to avoid problems with the length of file and excel sheet names.
 }
   \item{save.path}{
 A full \bold{PATH}, or the expansion of the current working directory into the folder where all the produced files will be saved (Default = current working directory).
@@ -37,14 +37,21 @@ A full \bold{PATH}, or the expansion of the current working directory into the f
   \item{color.grouping}{
 A \bold{vector} of \emph{length(color.grouping) == nlevels(group)} specifying for each group a color for the boxplot fill (either color names or RGB HEX codes).
 }
+  \item{comparison.list}{
+A \bold{list} where each element consists of two characters corresponding to two levels of the grouping factor. This list specifies the custom pairwise comparisons that the function will execute instead of evaluating all possible pairwise combinations of the grouping factor's levels. For instance, if the grouping factor has levels A, B, C, and D, a comparison list \code{list(c("A", "B"), c("C", "D"))} would instruct the function to only compare A to B and C to D, ignoring other combinations. If not specified, the default value is NULL, and the function will test all possible pairwise combinations of the levels of the factor supplied to the \emph{group} argument.
+}
   \item{p.adjust.method}{
-Method to adjust pairwise Wilcoxon test P-values (can be "none", "fdr", "bonferroni", etc... check p.adjust.methods to see all the possible methods to be used)\cr
-P-values are first generated for each feature with the pairwise.wilcox.test() function without multiple comparison correction. Once \bold{all} the features have been tested, the P-values are corrected using the desired method considering \bold{all} the comparisons computed. \cr
-
-Example: imagine feeding an OTU table with 30 taxa. For each taxa a pairwise.wilcox.test() is computed between all the groups specified with the group parameter (let's say 3 groups). Once all the possible pairwise comparisons are computed for all the 30 taxa (90 comparisons in total), the resulting P-values list is corrected for 90 items.
+Method to adjust pairwise Wilcoxon test P-values (can be "none", "fdr", "bonferroni", etc... check \emph{p.adjust.methods} to see all the possible methods to be used)\cr
+P-values are first generated for feature iterating through pairwise comparison with the wilcox.test(). Once \bold{all} the features have been tested, the P-values are corrected for each comparison using the desired method. \cr
+}
+  \item{trends}{
+A \bold{logical} (Default = TRUE), specifying whether to represent in significance bars and output tables also trends (P-value <= 0.1) with the "°" symbol. If set to FALSE, the P-value threshold is set to 0.05 for significance (P-value <= 0.05) and trends are not taken in consideration.
 }
   \item{plot.not.sig}{
 A \bold{logical} (Default = FALSE), specifying whether to plot also boxplots with no significant pairwise Wilcox test differences.
+}
+  \item{paired}{
+A \bold{logical} (Default = FALSE), specifying whether to perform paired Wilcoxon tests (signed-rank tests) in case of longitudinal studies with paired observations (e.g. matched pairs or before/after samples, or repeated measures).
 }
   \item{nrow.graph}{
 Number of rows of the output .pdf file (Default = 2). Used to group multiple boxplots in the same sheet.
@@ -62,7 +69,7 @@ A \bold{numerical} value specifying the height of each boxplot (Default = 4).
 A \bold{logical} (Default = FALSE), specifying whether to plot horizontal boxplots.
 }
   \item{ggplot.margins}{
-Concatenation of four \bold{numeric} values passed to \emph{ggplot} for handling the margins of each boxplot (Default = c(0.15, 0.15, 0.15, 0.6)).
+Concatenation of four \bold{numeric} values passed to \emph{ggplot} for handling the margins of each boxplot (Default = c(0.18, 0.18, 0.18, 0.6)).
 }
   \item{box.lwd}{
 A \bold{numeric} value to adjust line width of boxplots (Default = 0.4).
@@ -117,16 +124,16 @@ If \emph{smoothing = TRUE}, this \bold{character} specify the color used to cont
 }
   \item{additional.params}{
 An object of class \bold{gg} (a ggplot object, function, or parameter) to be passed at the end of each ggplot code in the script. \cr
-This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Defauult = NULL). \cr
+This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Default = NULL). \cr
 Example #1: additional.params = theme(panel.background = element_rect(fill="ivory1"))\cr
 Example #2: additional.params = theme_bw()+theme(legend.position="none")
   }
   \item{align.legend}{
-A \bold{logical} stating whether to center align the legend title to the legend elements in all boxplots. Only applicable if \emph{legend.position}!="none" is passed via \bold{additional.params}, otherwise legend is not plotted as default (Default = FALSE).
+A \bold{logical} stating whether to center align the legend title to the legend elements in all boxplots. Only applicable if \code{legend.position}!="none" is passed via \bold{additional.params}, otherwise legend is not plotted as default (Default = FALSE).
   }
 }
 \details{
-This function takes as input only \bold{data.frame} objects, so consider testing the \emph{class()} of your data before running the script. \cr
+This function takes as input only \bold{data.frame} objects, so consider testing the \code{class()} of your data before running the script. \cr
 Mandatory items are: \bold{data}, \bold{group}, \bold{taxlevel}, \bold{color.grouping}\cr
 The resulting output in the \bold{save.path} folder consist of two \emph{.pdf} files and a \emph{.xlsx} file.\cr
 Note that this function performs all the possible pairwise Wilcox test comparisons between groups. If you have a lot of timepoints and feel like some comparisons are not noteworthy or biologically senseless, consider this analysis only as preliminar and evaluate your group comparisons manually and carefully.
@@ -145,8 +152,10 @@ If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significan
 \item{'taxlevel'_wilcoxon_pairwise.xlsx }{
 An Excel file with three sheets:\cr
 1. The \bold{call} sheet contains the parameters passed to the function. It's useful for future edits on the code to remember which colours have been used in the plot, as well as the other graphical parameters and correction method.\cr
-2. The second sheet takes the name from the \bold{taxlevel} parameter and contains all the \bold{uncorrecred} pairwise Wilcoxon test P-values.
-3. The third sheet takes the name from the \bold{taxlevel} parameter and reports the \bold{p.adjust.method} as well. This sheet contains all the \bold{correcred} pairwise Wilcoxon test P-values (corrected for all the \emph{n} comparisons made within all the observations).
+2. The second sheet takes the name from the \bold{taxlevel} parameter and contains all the \bold{uncorrecred} pairwise Wilcoxon test P-values, as well as the average and SEM abundances of each taxa in each group.
+3. Same as the second sheed but with blank cells for the non-significant P-values according to \emph{trends} .
+4. Same as the second, but with \bold{p.adjust.method} corrected P-values. The correction is made for each pairwise comparison individually accounting for \emph{n} multiple comparisons, where \emph{n} equalt the number of taxa supplied. Consider therefore that submitting an input data with very few rows will provide quite light P-values adjustments.
+5. Same as the fourth, but again with blank cells where the P-values are not significant.
 }
 }
 \author{
