@@ -3,6 +3,7 @@
 microbAIDeR is a R-package made for easy preliminar microbiome analyses starting from QIIME2 outputs. The package provides all-in-one functions for statistical analysis and graphs generation, as well as useful function for data analyses in R.
 This package requires RTools to be installed in order to compiled the required dependancies. Please follow the developer's instruction from the [Comprehensive R Archive Network](https://cran.r-project.org/) to install RTools on your platform.
 
+<br>
 
 # Installation of the package and the required dependancies
 
@@ -15,10 +16,13 @@ microbAIDeR_install_dependancies() #To install all the packages that are necessa
 
 Depends: devtools, pairwiseAdonis, parallel, doParallel, openxlsx, tidyr, tibble, dplyr, ggplot2, ggsignif, gridExtra, tidyverse, stringr, vegan, cowplot, gtable, grid
 
+<br>
 
 # Examples
 
 Usage example for this package are included in the [Wiki](https://github.com/FabbriniMarco/microbAIDeR/wiki) section.
+
+<br>
 
 # Citation
 
