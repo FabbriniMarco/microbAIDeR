@@ -33,10 +33,10 @@ If you use this R package please cite this GitHub in your article:
   title = {microbAIDeR: An ensemble of functions for easier and quicker preliminary microbiome analyses},
   author = {Marco Fabbrini, Gabriele Conti},
   year = {2023},
-  note = {R package version 0.2.1},
+  note = {R package version 0.2.1 - Release 05-2024},
   url = {https://github.com/FabbriniMarco/microbAIDeR.git},
 }
-
-Example: Fabbrini, M. & Conti, G.,(2023) microbAIDeR - An ensemble of functions for easier and quicker preliminary microbiome analyses. Available on Github: https://github.com/FabbriniMarco/microbAIDeR/
-
 ```
+Example: 
+> Fabbrini, M. & Conti, G.,(2023) microbAIDeR - An ensemble of functions for easier and quicker preliminary microbiome analyses (v0.2.1 release 05-2024). Available on Github: https://github.com/FabbriniMarco/microbAIDeR/
+
