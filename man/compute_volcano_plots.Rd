@@ -10,7 +10,7 @@ This function handles non-tidy data.frames (e.g. OTU tables) and produces a scat
 \usage{
 compute_volcano_plots(data, group, taxlevel, save.path = getwd(), p.adjust.method = "fdr", \cr
     trends=TRUE, sigcolors=c("ivory3", "orange3", "darkred"),\cr
-    paired = FALSE, nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, \cr
+    nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, \cr
     ggplot.margins = c(1, 1, 1, .5), label.text.size = 2.8, label.padding=4,\cr
     arrows=TRUE, arrow.length=1.5,arrow.lwd=1.8,arrow.origin.offset=0.5,\cr
     arrow.text.cex=.7,arrow.text.color="grey22",\cr
@@ -41,9 +41,6 @@ A \bold{logical} (Default = TRUE), specifying whether to consider also trends (P
 }
   \item{sigcolors}{
 A three element \emph{character} vector containing the colors for the non significant, trends and significant points (Default = c("ivory3", "orange3", "darkred")). If trends is set to FALSE, only the first and third colors will be used, however the vector must always contain three colors.
-}
-  \item{paired}{
-A \bold{logical} (Default = FALSE), specifying whether to perform paired Wilcoxon tests (signed-rank tests) in case of paired observations (e.g. matched pairs or before/after samples, or repeated measures).
 }
   \item{nrow.graph}{
 Number of rows of the output .pdf file (Default = 1). Used to group the  volcano plots in the same sheet.

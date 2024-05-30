@@ -53,6 +53,9 @@ microbAIDeR_install_dependancies <- function(){
    if(!require(ggrepel)){
       install.packages("ggrepel")
    }
+   if(!require(scales)){
+      install.packages("scales")
+  }
 }
 
 
@@ -288,6 +291,9 @@ align_legend <- function(p, hjust = 0.5)
 }
 
 
+mkdir <- function (path){
+  if(!dir.exists(path)){dir.create(path)}
+}
 
 
 compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd(), color.grouping, comparison.list = NULL, p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE,
@@ -566,7 +572,7 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
 
 compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"),
                                    save.path = getwd(), adonis_n_perm = 9999, beta.folder.path = paste(getwd(), "RESULTS/beta_diversity", sep="/"), manual.beta.path = NULL, sample.list, mds = c(1,2), group, color.grouping ,
-                                   spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE,ellipse.fill = FALSE, ellipse.conf = 0.95, ellipse.alpha = 0.75 , ellipse.lwd = 2.5, manual.bordercol = NULL,
+                                   alpha.points = 1, spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE,ellipse.fill = FALSE, ellipse.conf = 0.95, ellipse.alpha = 0.75 , ellipse.lwd = 2.5, manual.bordercol = NULL,
                                    svg.width = 7, svg.height = 5,
                                    cex.points = 1.2, adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr",
                                    nrow.graph = 2, ncol.graph = 2, width.graph = 6, height.graph = 4, ggplot.margins = c(0.15, 0.15, 0.15, 0.6),
@@ -591,7 +597,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
 
    call.print = as.data.frame(rbind( paste(beta_metrics, collapse=", "), color.grouping = paste(color.grouping, collapse = ", "),
                                      save.path, adonis_n_perm , beta.folder.path ,  mds = paste(mds, collapse=", ") ,
-                                     spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , 
+                                     alpha.points, spiders, ellipses , ellipse.focus , ellipse.conf , ellipse.alpha , 
                                      svg.width , svg.height ,
                                      cex.points , adonis.p.adjust, wilcoxon.p.adjust, additional.params=paste(additional.params, collapse=", ")
    ))
@@ -630,6 +636,9 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
          color_beta[is.na(color_beta)] = "black"
       }
       colnames(coord_beta) = c("AX1", "AX2")
+      if( !is.numeric(alpha.points) ){alpha.points = 1}
+      if( alpha.points > 1 ){ alpha.points = 1}
+      if(alpha.points < 1){color_beta = scales::alpha(color_beta, alpha.points)}
       # Base plot
       svg( paste(save.path,"/", metrics, ".svg", sep=""), width=svg.width, height = svg.height)
       plot(metric_beta, type="n", main=metrics, choices=mds, xlab=paste("MDS", mds[1]," - [" ,sig1, "%]", sep="") , ylab=paste("MDS", mds[2]," - [" ,sig2, "%]", sep="") )
@@ -692,7 +701,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       adone[,adonis.p.adjust] <- sapply(adone$p.adjusted, sigFunction, trends = trends)
 
       addSheet( path=paste(save.path, "/beta_adonis.xlsx", sep=""), sheet.name = metrics,
-                addition = adone[,c(1,6,9, 7,10)], col.save=TRUE, row.save=FALSE)
+                addition = adone, col.save=TRUE, row.save=FALSE)
 
       # Calculate and plot the intra-group variances
       print(paste("Computing intra-group variance"))
@@ -1024,7 +1033,7 @@ scaling.manual <- function(x, range.min, range.max) {
 
 
 compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.adjust.method = "fdr", trends=TRUE, sigcolors=c("ivory3", "orange3", "darkred"),
-                                  paired = FALSE, nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, ggplot.margins = c(1,1,1,.5),
+                                  nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, ggplot.margins = c(1,1,1,.5),
                                   label.text.size = 2.8, label.padding=4,
                                   arrows=TRUE, arrow.length=1.5,arrow.lwd=1.8,arrow.origin.offset=0.5,
                                   arrow.text.cex=.7,arrow.text.color="grey22",
@@ -1057,7 +1066,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
    wt <- rep(NA, nrow(data))
    for( i in 1:nrow(data))
    {
-      wt[i] = suppressWarnings(wilcox.test( as.numeric(data[i,]) ~ group, paired = paired )$p.value)
+      wt[i] = suppressWarnings(wilcox.test( as.numeric(data[i,]) ~ group )$p.value)
    }
    wt[is.nan(wt)] = 1
    wt[is.na(wt)] = 1
@@ -1084,7 +1093,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
    call.print = as.data.frame(rbind(p.adjust.method, taxlevel, save.path,
                                     sigcolors = paste(sigcolors, collapse = ", "),
                                     nrow.graph , ncol.graph , width.graph , height.graph , ggplot2.margins = paste(ggplot.margins, collapse = ", ") ,
-                                    paired, label.text.size, label.padding,arrow.length,arrow.lwd,arrow.origin.offset,
+                                    label.text.size, label.padding,arrow.length,arrow.lwd,arrow.origin.offset,
                                     arrow.text.cex,arrow.text.color,
                                     text.x.size , text.y.size ,  text.y.title.size, additional.params=paste(additional.params, collapse=", ")
    ))
@@ -1188,7 +1197,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
       labs(x="Log-Fold change", size="Rel. Ab.", y=paste("-log2(", p.adjust.method, ")", sep=""))+
       scale_y_continuous(limits = c(0, max(-log2(tidata$corr))+.5 ) )+
       scale_x_continuous(limits = c( min(tidata$LFC)-.5, max(tidata$LFC)+.5 ))+
-      geom_text_repel(show_guide=F, size = label.text.size, point.padding = label.padding, aes(fontface = "italic"))+
+      geom_text_repel(show.legend=F, size = label.text.size, point.padding = label.padding, aes(fontface = "italic"))+
       theme( legend.key = element_rect(fill = NA), plot.margin = unit(ggplot.margins, "cm"),
              axis.text.x = element_text(size = text.x.size),
              axis.text.y = element_text(size = text.y.size), axis.title.y = element_text(size = text.y.title.size)

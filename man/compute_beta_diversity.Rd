@@ -14,7 +14,7 @@ compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity
         beta_metrics = c("braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"), \cr
         mds = c(1, 2), adonis_n_perm = 9999, \cr
         adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr" \cr
-        plot.not.sig = FALSE, \cr
+        plot.not.sig = FALSE, alpha.points=1 \cr
         spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE, ellipse.fill = FALSE, \cr
         ellipse.lwd = 2.5, ellipse.conf = 0.95, ellipse.alpha = 0.75, manual.bordercol = NULL,\cr
         svg.width = 7, svg.height = 5, \cr
@@ -68,6 +68,9 @@ Please note that in case of a two-group beta diversity analysis, the reported co
 }
   \item{wilcoxon.p.adjust}{
 A \bold{character} value pointing to the P-value correction method for the pairwise Wilcoxon testing for the intra-group variance (Default = "fdr"). Can be any value from p.adjust.methods.\cr
+}
+  \item{alpha.points}{
+A \bold{numeric} value handling points fill transparency in plots (Default = 1 - fully opaque) \cr
 }
   \item{spiders}{
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with spiders.
