@@ -693,7 +693,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
          legend("topright", legend=levels(group_beta), pt.cex=1, fill=color.grouping, horiz=F, x.intersp = 0.4, y.intersp = 0.7, bty="n", cex=0.8)
          graphics.off()
       }
-      # ADONIS
+      # Adonis
       print(paste("Computing pairwise Adonis for", metrics))
       adone = pairwise.adonis(beta, group_beta, perm = adonis_n_perm, p.adjust.m = adonis.p.adjust)
       trends = TRUE #Display trends in pairwise adonis p-values table
@@ -1182,6 +1182,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
          annotation_custom(grob = grid::textGrob(label = levels(group)[2], hjust=-0.05, gp=gpar(col=arrow.text.color, cex=arrow.text.cex)),
                            xmin = max(tidata$LFC)/1.5, xmax = max(tidata$LFC)/1.5, ymin = 0, ymax = 0)
    }
+   if( !is.null(additional.params)){ graphy <- graphy + additional.params }
    if ( align.legend ){ graphy <- align_legend(graphy) }
    gvec[[iter1]] <- graphy
    inc(iter1, increment = 1)
@@ -1218,6 +1219,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
             annotation_custom(grob = grid::textGrob(label = levels(group)[2], hjust=-0.05, gp=gpar(col=arrow.text.color, cex=arrow.text.cex)),
                               xmin = max(tidata$LFC)/1.5, xmax = max(tidata$LFC)/1.5, ymin = 0, ymax = 0)
       }
+      if( !is.null(additional.params)){ graphy <- graphy + additional.params }
       if ( align.legend ){ graphy <- align_legend(graphy) }
       gvec[[iter1]] <- graphy
    }
@@ -1241,7 +1243,7 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
                col.save = TRUE, row.save = TRUE)
    }
    # Save plots and excels
-   print(paste("Saving plots into ", save.path, "/", taxlevel, "_volcano.xlsx", sep=""))
+   print(paste("Saving plots into ", save.path, "/", taxlevel, "_volcano.pdf", sep=""))
    suppressWarnings(ggsave(
       filename = paste(save.path, "/", taxlevel, "_volcano.pdf", sep=""),
       plot = marrangeGrob(gvec, nrow=nrow.graph, ncol=ncol.graph, top=NULL ,
