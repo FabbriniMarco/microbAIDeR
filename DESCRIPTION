@@ -1,10 +1,16 @@
 Package: microbAIDeR
 Type: Package
 Title: An ensemble of functions for easier and quicker preliminary microbiome analysis
-Version: 0.2.2
-Author: Marco Fabbrini <fabbrinimarco.mf@gmail.com>, Gabriele Conti
-Maintainer: Marco Fabbrini <fabbrinimarco.mf@gmail.com>
-Description: An ensemble of functions for easier and quicker preliminary microbiome analyses 
-License: GPL (>= 2)
+Version: 0.3.0
+Year: 2024
+Authors@R: c(
+    person("Marco", "Fabbrini", email = "fabbrinimarco.mf@gmail.com", role = c("aut", "cre")),
+    person("Gabriele", "Conti", role = c("ctb")))
+Description: Functions and tools for microbiome data analysis.
+Depends: R (>= 4.3.0)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/FabbriniMarco/microbAIDeR
+BugReports: https://github.com/FabbriniMarco/microbAIDeR/issues
+RoxygenNote: 7.1.1

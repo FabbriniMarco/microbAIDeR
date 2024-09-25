@@ -8,16 +8,18 @@ Quickly generate boxplots with tested pairwise Wilcoxon test significance betwee
 This function handles non-tidy data.frames (e.g. OTU tables or alpha diversity tables) and produces one boxplot per each parameters found in the rownames, testing the pairwise wilcoxon differences between the observation found in the colnames of the input data.frame, grouped by a grouping factor
 }
 \usage{
-compute_wilcoxon_and_plot(data, group, taxlevel,save.path = getwd(), color.grouping, comparison.list=NULL, \cr
-    p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE, paired=FALSE, \cr
-    nrow.graph = 2, ncol.graph = 2, width.graph = 6, height.graph = 4, \cr
-    horiz = FALSE, ggplot.margins = c(0.18, 0.18, 0.18, 0.6), box.lwd = 0.4, \cr
-    jitter.pch = 21, jitter.stroke = 0.15, jitter.size = 0.7, jitter.color = "grey22", \cr
-    signif.step.increase = 0.12, signif.text.size = 3.5, signif.line.size = 0.4, \cr
-    text.x.size = 8, text.y.size = 7, text.y.title.size = 9, \cr
-    smoothing = FALSE, smoothing.lwd = 1, smoothing.color = "darkred", \cr
+compute_wilcoxon_and_plot(data, group, taxlevel,save.path = getwd(), color.grouping, comparison.list=NULL,
+    p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE, paired=FALSE, 
+    nrow.graph = 2, ncol.graph = 2, width.graph = 4.5, height.graph = 3.5, 
+    horiz = FALSE, ggplot.margins = c(0.18, 0.18, 0.18, 0.6), box.lwd = 0.4, 
+    jitter.pch = 21, jitter.stroke = 0.15, jitter.size = 0.7, jitter.color = "grey22", 
+    signif.step.increase = 0.12, signif.text.size = 3, signif.line.size = 0.4, 
+    text.x.size = 6, text.y.size = 6, text.y.title.size = 8, 
+    smoothing = FALSE, smoothing.lwd = 1, smoothing.color = "darkred", 
     smoothing.se = FALSE, smoothing.method = "loess", contrast.color = "ivory1",
-    additional.params = NULL, align.legend = FALSE)
+    additional.params = NULL, align.legend = FALSE, 
+    plot.order = "kruskal", pattern.fill = FALSE, pattern = "stripe",
+    pattern.angle = 45, pattern.alpha = 0.4, pattern.density = 0.1, pattern.spacing = 0.05)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,7 +31,7 @@ A \bold{factor} of \emph{length(group) == ncol(data)}. The level order would be 
 }
   \item{taxlevel}{
 A prefix to append to file names, to pinpoint for exampl at which level the analysis was computed (e.g., "L2", "L5", "L6") or a name of choice. \cr
-Output file names start with this text. Use shorts names to avoid problems with the length of file and excel sheet names.
+Output file names start with this text. Using short names is recommended to avoid potential issues with file name or sheet name length.
 }
   \item{save.path}{
 A full \bold{PATH}, or the expansion of the current working directory into the folder where all the produced files will be saved (Default = current working directory).
@@ -90,19 +92,19 @@ A \bold{character} specifying the color of each jitter border (Default = "grey22
 A \bold{numeric} value handling the distance between each sig bar plotted by ggsignif (Default = 0.12).
 }
   \item{signif.text.size}{
-A \bold{numeric} value setting the font size of statistical significance symbols over sig bars (Default = 3.5).
+A \bold{numeric} value setting the font size of statistical significance symbols over sig bars (Default = 3).
 }
   \item{signif.line.size}{
 A \bold{numeric} value setting the width of the lines of the significance bracket (Default = 0.4).
 }
   \item{text.x.size}{
-A \bold{numeric} value setting X-axis units font size for boxplots (Default = 8).
+A \bold{numeric} value setting X-axis units font size for boxplots (Default = 6).
 }
   \item{text.y.size}{
-A \bold{numeric} value setting Y-axis units font size for boxplots (Default = 7).
+A \bold{numeric} value setting Y-axis units font size for boxplots (Default = 6).
 }
   \item{text.y.title.size}{
-A \bold{numeric} value setting title font size of Y axis title for boxplots (Default = 9).
+A \bold{numeric} value setting title font size of Y axis title for boxplots (Default = 8).
 }
   \item{smoothing}{
 A \bold{logical} describing whether to plot the smoothed conditional means with \emph{geom_smooth()} over the boxplots (Default = FALSE).
@@ -131,8 +133,29 @@ Example #2: additional.params = theme_bw()+theme(legend.position="none")
   \item{align.legend}{
 A \bold{logical} stating whether to center align the legend title to the legend elements in all boxplots. Only applicable if \code{legend.position}!="none" is passed via \bold{additional.params}, otherwise legend is not plotted as default (Default = FALSE).
   }
+  \item{pattern.fill}{
+A \bold{logical} (Default = FALSE), specifying whether to fill the boxplot with patterns instead of continuous colors. If set to TRUE, the boxplot will be filled using the ggpattern package, which allows for a variety of pattern styles. This is useful for visual differentiation, especially in black-and-white prints or when color is not sufficient.
+}
+  \item{pattern}{
+A \bold{character} specifying the type of pattern to be used in the ggpattern filling of the boxplots (Default = "stripe"). Some available patterns include "stripe", "crosshatch", "circle", and "none". This parameter determines the visual style of the patterns inside the boxplots when \code{pattern.fill = TRUE}.
+}
+  \item{pattern.angle}{
+A \bold{numeric} value specifying the angle of the pattern lines (Default = 45). This is particularly relevant for line-based patterns like "stripe" or "crosshatch" and can help differentiate boxplots when multiple patterns are used.
+}
+  \item{pattern.density}{
+A \bold{numeric} value (Default = 0.1) that controls the density of the pattern, determining how closely the lines or shapes are spaced in the boxplot pattern fill. A higher value results in more closely spaced patterns.
+}
+  \item{pattern.spacing}{
+A \bold{numeric} value (Default = 0.05) that controls the spacing between pattern elements, affecting how much space is between the individual lines or shapes in the pattern. This is particularly useful for fine-tuning the appearance of patterns to achieve visual clarity in the plot.
+}
+  \item{plot.order}{
+A \bold{character} (Default = "kruskal"), specifying the order in which boxplots are arranged in the output PDF. This parameter can be set to "kruskal" to arrange boxplots based on the significance of the Kruskal-Wallis test, where the most significant differences between groups appear first, or "rownames" to maintain the order of the rows in the input \bold{data} object.
+}
+
 }
 \details{
+This function is designed for visualizing group differences using boxplots, with statistical significance indicated by significance bars derived from pairwise Wilcoxon tests. The function generates both visual and tabular outputs that are useful for preliminary exploratory analysis of group differences in microbiome or other biological datasets.\cr
+
 This function takes as input only \bold{data.frame} objects, so consider testing the \code{class()} of your data before running the script. \cr
 Mandatory items are: \bold{data}, \bold{group}, \bold{taxlevel}, \bold{color.grouping}\cr
 The resulting output in the \bold{save.path} folder consist of two \emph{.pdf} files and a \emph{.xlsx} file.\cr
@@ -152,7 +175,7 @@ If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significan
 \item{'taxlevel'_wilcoxon_pairwise.xlsx }{
 An Excel file with three sheets:\cr
 1. The \bold{call} sheet contains the parameters passed to the function. It's useful for future edits on the code to remember which colours have been used in the plot, as well as the other graphical parameters and correction method.\cr
-2. The second sheet takes the name from the \bold{taxlevel} parameter and contains all the \bold{uncorrecred} pairwise Wilcoxon test P-values, as well as the average and SEM abundances of each taxa in each group.
+2. The second sheet takes the name from the \bold{taxlevel} parameter and contains all the \bold{uncorrected} pairwise Wilcoxon test P-values, as well as the average and SEM abundances of each taxa in each group.
 3. Same as the second sheed but with blank cells for the non-significant P-values according to \emph{trends} .
 4. Same as the second, but with \bold{p.adjust.method} corrected P-values. The correction is made for each pairwise comparison individually accounting for \emph{n} multiple comparisons, where \emph{n} equalt the number of taxa supplied. Consider therefore that submitting an input data with very few rows will provide quite light P-values adjustments.
 5. Same as the fourth, but again with blank cells where the P-values are not significant.
@@ -162,46 +185,36 @@ An Excel file with three sheets:\cr
 Marco Fabbrini - m.fabbrini@unibo.it
 }
 \examples{
+env <- read.delim("env.tsv", header=T, row.names = 1, sep='\t')
+env$Group = factor(env$Group, levels = c("Group 1", "Group 2"))
+genera <- read.delim("genera_example.tsv", header=T, row.names = 1, sep='\t')
+all( colnames(genera) == rownames(env) )
 
-# Make sure to check in which directory you are working
-getwd()
-[1] "C:/Users/.../my_working_directory/"
+compute_wilcoxon_and_plot( data = genera, 
+                           group = env$Group, 
+                           p.adjust.method = "fdr", 
+                           taxlevel = "L6", save.path = "Results/Compositional",
+                           color.grouping = c("navajowhite", "salmon"), plot.not.sig = TRUE )
+# Setting plot.not.sig = TRUE to include also non-significant boxplots in the output
+                           
+# If you want to experiment with more fancy plots
 
-# If you want to store your output in a subfolder of your currently working directory, first create it
-# For example:
-if( !dir.exists("Plots")){ dir.create("Plots") }
-
-
-########## Example 1 : Processing OTU tables
-
-# Phylum2 is the OTU table at L2 (clean phyla names on the rows, samples on the columns)
-# Group is a factor for grouping the samples so that:  length(group) == ncol(phylum2) & is.factor(group)
-# Make sure to have the directories created for the save path before running the script
-# the color_grouping vector must contain a matched color for each level of group:  length(color_grouping) == nlevels(group)
-# MAKE SURE TO MATCH your otu_table_L?.tsv table's sample names with the sample names of yout env or map file used to generate the group factor variable!!!!
-
-> compute_wilcoxon_and_plot( data = phylum2, p.adjust.method = "bonferroni", group = group,
-                           taxlevel = "L2", save.path = "Plots", color.grouping = color_grouping )
-
-[1] "Saving P-values to C:/Users/.../my_working_directory/Plots/L2_wilcoxon_pairwise.xlsx"
-[1] "Saving plots to C:/Users/.../my_working_directory/Plots/L2_boxplot_wilcox_uncorrected.pdf"
-[1] "Saving plots to C:/Users/.../my_working_directory/Plots/L2_boxplot_wilcox_fdr.pdf"
-
-
-########## Example 2 : Processing alpha diversity tables
-
-# alpha is the alpha diversity table, with samples on the rows and alpha metrics on the columns
-# Each sample is assigned to a group, and the group variable is a factor:  nrow(alpha) == length(group) & is.factor(group)
-# Each level of the group factor is assigned to a color through the color_grouping variable:  length(color_grouping) == nlevels(group)
-# MAKE SURE TO MATCH your alpha.tsv table's sample names with the sample names of yout env or map file used to generate the group factor variable!!!!
-
-compute_wilcoxon_and_plot( data = as.data.frame(t(alpha)), p.adjust.method = "bonferroni", group = group, color.grouping = color_grouping,
-                           taxlevel = "alpha", save.path = "Plots", signif.step.increase = 0.15, signif.text.size = 3 )
-
-[1] "Saving P-values to C:/Users/.../my_working_directory/Plots/alpha_wilcoxon_pairwise.xlsx"
-[1] "Saving plots to C:/Users/.../my_working_directory/Plots/alpha_boxplot_wilcox_uncorrected.pdf"
-[1] "Saving plots to C:/Users/.../my_working_directory/Plots/alpha_boxplot_wilcox_fdr.pdf"
-
+compute_wilcoxon_and_plot( data = genera, 
+                           group = env$Group, 
+                           p.adjust.method = "fdr", 
+                           taxlevel = "L6_custom", save.path = "Results/Compositional",
+                           color.grouping = c("navajowhite", "salmon"), plot.not.sig = FALSE,
+                           nrow.graph = 2, ncol.graph = 3, jitter.pch = 24,
+                           additional.params = theme(panel.background = element_blank(), 
+                                                     axis.text.x = element_blank(), axis.ticks.x = element_blank(),
+                                                     axis.title.y = element_text(size = 5, face = "italic"),
+                                                     panel.grid.major = element_line(colour = "grey90", linewidth = 0.38), 
+                                                     legend.position = 'right', legend.key.size = unit(0.2, "cm"), 
+                                                     legend.text = element_text(size = 5), legend.title = element_blank(), 
+                                                     legend.background = element_blank(), legend.box.background = element_blank(),
+                                                     panel.grid.minor = element_line(colour = "grey95", linewidth = 0.08) )
+)
+                           
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

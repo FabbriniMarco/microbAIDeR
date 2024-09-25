@@ -2,10 +2,11 @@
 \alias{compute_beta_diversity}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Quickly compute MDS analyses starting from beta diversity matrices output of the QIIME2 pipeline (ideally qiime2_multipipeline)
+Quickly compute MDS analyses and produce PCoA plots starting from beta diversity matrices 
 }
 \description{
 This function automatically computes beta diversity analyses performind MDS, plotting PCoA, testing inter-group differences with pairwise-PERMANOVA and intra-group variance.
+The function accepts the beta_diversity folder structure output of 16S-KrakenBracken-Pipeline - https://github.com/FabbriniMarco/16S-KrakenBracken-Pipeline or even single distance matrices in .tsv format.
 }
 \usage{
 compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity", sep="/"), \cr
@@ -13,16 +14,16 @@ compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity
         group, color.grouping, sample.list, \cr
         beta_metrics = c("braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"), \cr
         mds = c(1, 2), adonis_n_perm = 9999, \cr
-        adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr" \cr
-        plot.not.sig = FALSE, alpha.points=1 \cr
-        spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE, ellipse.fill = FALSE, \cr
-        ellipse.lwd = 2.5, ellipse.conf = 0.95, ellipse.alpha = 0.75, manual.bordercol = NULL,\cr
+        adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr", \cr
+        alpha.points=1, spiders = FALSE, spiders.lwd = 1.5,  \cr
+        ellipses = FALSE, ellipse.focus = FALSE, ellipse.fill = FALSE, \cr
+        ellipse.lwd = 1.2, ellipse.conf = 0.95, ellipse.alpha = 0.45, manual.bordercol = NULL,\cr
         svg.width = 7, svg.height = 5, \cr
         cex.points = 1.2, width.graph = 6, height.graph = 4, \cr
-        ggplot.margins = c(0.1, 0.1, 0.1, 0.5), \cr
+        ggplot.margins = c(0.15, 0.15, 0.15, 0.6), \cr
         nrow.graph = 2, ncol.graph = 2, \cr
         text.x.size = 8, text.y.size = 7, text.title.size = 9, \cr
-        additional.params = NULL)
+        additional.params = NULL, use.ggplot = TRUE, additional.params.beta=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -88,13 +89,13 @@ A \bold{logical} (Default = FALSE), specifying whether to produce an additional 
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with filled ellipses and normal-size data points. Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level.
 }
   \item{ellipse.lwd}{
-A \bold{numeric} (Default = 1.5), specifying the line width for PCoA ellipses and ellipses.focus (not affecting ellipse.fill).
+A \bold{numeric} (Default = 1.2), specifying the line width for PCoA ellipses and ellipses.focus (not affecting ellipse.fill).
 }
   \item{ellipse.conf}{
 A \bold{numeric} value passing ellipse confidence level for the eventual ellipses plot (Default = 0.95).
 }
   \item{ellipse.alpha}{
-A \bold{numeric} value handling ellipse fill transparency in plots (Default = 0.75).
+A \bold{numeric} value handling ellipse fill transparency in plots (Default = 0.45).
 }
   \item{manual.bordercol}{
 If NULL, ellipse border colors are assigned from the \emph{color.grouping} variable. If a single \bold{character} value is specified, all ellipses border are colored accordingly (Default = NULL).
@@ -133,7 +134,16 @@ A \bold{numeric} value setting Y-axis font size for barplots (Default = 7).
 A \bold{numeric} value setting title font size for barplots (Default = 9).
 }
   \item{additional.params}{
-An object of class \bold{gg} (a ggplot object, function, or parameter) to be passed at the end of each ggplot code in the script. \cr
+An object of class \bold{gg} (a ggplot object, function, or parameter) to be passed at the end of each ggplot code in the intra-group variance plots. \cr
+This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Default = NULL). \cr
+Example: additional.params = theme(panel.background = element_rect(fill="ivory1"))
+  }
+  \item{use.ggplot}{
+A \bold{logical} (Default = TRUE), specifying whether to produce PCoA plots using ggplot style (Default = TRUE) or classic R-base plots. \cr
+Setting use.ggplot = FALSE for the PCoA results in quite different interpretation of the \emph{ellipse.lwd} (suggested = 2.5) and \emph{ellipse.alpha} (suggested = 0.75) parameters.
+}
+    \item{additional.params.beta}{
+An object of class \bold{gg} (a ggplot object, function, or parameter) to be passed at the end of each ggplot PCoA plot. \cr
 This is useful to override parameters in the plot as well as bypass further parameters as panel background, themes presets, etc.. (Default = NULL). \cr
 Example: additional.params = theme(panel.background = element_rect(fill="ivory1"))
   }
@@ -148,9 +158,9 @@ The script produces up to 4 PCoA SVG plots for each metrics, as well as one PDF 
 \item{'beta_metrics'*.svg }{
 For each metric found in the \bold{beta.folder.path} and passed to the \bold{beta_metrics} parameter, at least a PCoA plot is produced in SVG format. For each TRUE logical passed to one of the \bold{ellipses}, \bold{ellipses.focus} or \bold{ellipses.fill} parameters, an additional SVG plot is produced and named accordingly.
 }
-\item{beta_intragroup_variance.pdf }{
+\item{metric-name_intragroup_variance.pdf }{
 A 330dpi PDF file with intra-group beta distances barplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
-Three barplots are computed for each metrics (variance, IQR, Range).
+Three barplots are computed for each distance metric (variance, IQR, Range), resulting in a different file for each metric.
 }
 \item{beta_adonis.xlsx }{
 An Excel file with several sheets:\cr
@@ -171,32 +181,21 @@ Marco Fabbrini - m.fabbrini@unibo.it
 }
 
 \examples{
-
-# Make sure to check in which directory you are working
-getwd()
-[1] "C:/Users/.../my_working_directory/"
-
-# If you want to store your output in a subfolder of your currently working directory, first create it
-# For example:
-if( !dir.exists("Plots")){ dir.create("Plots") }
-
-
-
 # In the beta_diversity folder there is a folder for each metric
 ## named "braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"
 # Inside of each folder there must be a distance-matrix.tsv file
-# This is the default configuration for the qiime2_multipipeline script output, so just point to the RESULT/beta_diversity folder for the beta.folder.path
 
-# The sample.list variable needs to contain the sample names, matched with the group variable!!!
+# The sample.list variable needs to contain the sample names, matched with the group factor
 
-compute_beta_diversity( beta.folder.path="C:/Users/.../my_working_directory/RESULTS/beta_diversity", save.path="Plots",
-                        ellipses = TRUE,
-                        ellipse.focus = TRUE,
-                        ellipse.conf = .99,
-                        color.grouping = color_grouping,
-                        group = group,
-                        sample.list = mapfile$Samplecodes)
+env <- read.delim("example data/env.tsv", header=T, row.names = 1, sep='\t')
+env$Group = factor(env$Group, levels = c("Group 1", "Group 2"))
 
+compute_beta_diversity(beta.folder.path = "example data/beta_diversity/", 
+                       save.path = "Results/Betadiv",
+                       group = env$Group,
+                       sample.list = rownames(env) , 
+                       ellipses = TRUE, spiders = TRUE, # use.ggplot = TRUE by default
+                       color.grouping = c("navajowhite", "salmon") )
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

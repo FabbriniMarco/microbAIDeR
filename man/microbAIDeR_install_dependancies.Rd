@@ -30,7 +30,7 @@ No item required
 %% ~put references to the literature/web site here ~
 }
 \author{
-Marco Fabbrini - m.fabbrini@unibo.it
+Marco Fabbrini
 }
 \note{
 %%  ~~further notes~~

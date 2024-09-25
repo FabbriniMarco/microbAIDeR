@@ -33,7 +33,7 @@ A \bold{numeric} vactor containing the values of the distribution we want to com
 %% ~put references to the literature/web site here ~
 }
 \author{
-Marco Fabbrini - m.fabbrini@unibo.it
+Marco Fabbrini
 }
 \note{
 %%  ~~further notes~~
@@ -48,7 +48,7 @@ Marco Fabbrini - m.fabbrini@unibo.it
 distrib = runif(200, min = 3, max = 6)
 
 se.median(distrib)
-# [1] 0.1346104
+# [1] 0.12524
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

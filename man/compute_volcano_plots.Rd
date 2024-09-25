@@ -2,19 +2,25 @@
 \alias{compute_volcano_plots}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Quickly generate volcano plots with tested pairwise Wilcoxon test significance between two groups (healthy/disease or treatment/control) starting from a data.frame object
+Generate Volcano Plots with Wilcoxon Test Significance Between Two Groups
 }
 \description{
-This function handles non-tidy data.frames (e.g. OTU tables) and produces a scatter volcano plot, marking differences between the observation found in the colnames of the input data.frame, grouped by a two-level grouping factor
+This function handles non-tidy data.frames (e.g. OTU tables) and produces a scatter volcano plot, marking differences between the observation found in the colnames of the input data.frame, grouped by a two-level grouping factor. \cr
+The tendency of each taxa is rendered in Log-Fold Change, considering both average and median values of the distribution, with customizable control by the user via the \code{w1} and \code{w2}  parameter according to the LFC formula:\cr\cr
+\code{
+\verb{            }(w1 * median(group1) + (1 - w1) * mean(group1))\cr
+LFC = log ( ----------------------------------------------    )\cr
+\verb{            }(w2 * median(group2) + (1 - \code{w2} ) * mean(group2))
+}
 }
 \usage{
-compute_volcano_plots(data, group, taxlevel, save.path = getwd(), p.adjust.method = "fdr", \cr
-    trends=TRUE, sigcolors=c("ivory3", "orange3", "darkred"),\cr
-    nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, \cr
-    ggplot.margins = c(1, 1, 1, .5), label.text.size = 2.8, label.padding=4,\cr
-    arrows=TRUE, arrow.length=1.5,arrow.lwd=1.8,arrow.origin.offset=0.5,\cr
-    arrow.text.cex=.7,arrow.text.color="grey22",\cr
-    text.x.size = 8, text.y.size = 7,  text.y.title.size = 9,\cr
+compute_volcano_plots(data, group, taxlevel, save.path = getwd(), p.adjust.method = "fdr", 
+    w1 = 0.5, w2 = 0.5, trends=TRUE, sigcolors=c("ivory3", "orange3", "darkred"),
+    nrow.graph = 1, ncol.graph = 2, width.graph = 20, height.graph = 8, 
+    ggplot.margins = c(1, 1, 1, .5), label.text.size = 2.8, label.padding=4,
+    arrows=TRUE, arrow.length=1.5,arrow.lwd=1.8,arrow.origin.offset=0.5,
+    arrow.text.cex=.7,arrow.text.color="grey22",
+    text.x.size = 8, text.y.size = 7,  text.y.title.size = 9,
     additional.params = NULL, align.legend = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,11 +42,17 @@ A full \bold{PATH}, or the expansion of the current working directory into the f
 Method to adjust pairwise Wilcoxon test P-values (can be "none", "fdr", "bonferroni", etc... check p.adjust.methods to see all the possible methods to be used)\cr
 P-values are computed for each feature and the correction is applied to all P-values all together.
 }
+  \item{w1}{
+A \bold{numeric} value setting the \code{w1} coefficient for the LFC calculation.
+}
+  \item{w2}{
+A \bold{numeric} value setting the \code{w2}  coefficient for the LFC calculation.
+}
   \item{trends}{
 A \bold{logical} (Default = TRUE), specifying whether to consider also trends (P-value <= 0.1). In this way trends will be colored differently (Default = "orange3") from non significant points. If set to FALSE, the P-value threshold is set to 0.05 for significance (P-value <= 0.05) and trends are plotted as non significant colored according to \bold{sigcolors}.
 }
   \item{sigcolors}{
-A three element \emph{character} vector containing the colors for the non significant, trends and significant points (Default = c("ivory3", "orange3", "darkred")). If trends is set to FALSE, only the first and third colors will be used, however the vector must always contain three colors.
+A character vector with three colors used to represent non-significant points, trends, and significant points, respectively (Default = c("ivory3", "orange3", "darkred")). If \code{trends = FALSE}, only the first and third colors are used.
 }
   \item{nrow.graph}{
 Number of rows of the output .pdf file (Default = 1). Used to group the  volcano plots in the same sheet.
@@ -104,52 +116,43 @@ A \bold{logical} stating whether to center align the legend title to the legend 
 This function takes as input only \bold{data.frame} objects, so consider testing the \code{class()} of your data before running the script. \cr
 Mandatory items are: \bold{data}, \bold{group}, \bold{taxlevel}, \cr
 The resulting output in the \bold{save.path} folder consist of one \emph{.pdf} file and a \emph{.xlsx} file.\cr
+\bold{w1 and \code{w2}  coefficients}\cr
+Adjusting the values of the \code{w1} and \code{w2} coefficients allows control over the influence of the median and mean in the LFC calculation.\cr
+\itemize{
+  \item \code{w1 = 1} or \code{w2 = 1}: gives full weight to the median, exclusively using the median of the group’s values in the calculation.
+  \item \code{w1 = 0} or \code{w2 = 0}: gives full weight to the mean, exclusively using the mean.
+  \item Intermediate values (e.g., \code{w1 = 0.5} or \code{w2 = 0.5}): balance the influence of both the median and the mean, assigning equal importance to these two measures of central tendency.
+}
+In datasets with a large number of zero values (as is common in microbiome data), the median may provide a more robust measure, as it is less influenced by outliers and zeros.\cr
+The mean tends to smooth the data but may be biased in zero-inflated datasets where certain taxa have high relative abundances, skewing the average.\cr
+For skewed data or when outliers are present, setting \code{w1} and \code{w2} closer to 1 (favoring the median) may lead to more reliable results. For normally distributed data, favoring the mean by setting \code{w1} and \code{w2} closer to 0 may be appropriate.\cr
+
 }
 \value{
-\item{'taxlevel'_volcano.pdf }{
-A 330dpi PDF file with volcano plots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
-A single volcano plot is always created with uncorrected Wilcoxon P-values. Dots are colored according to P-value significance and the diameter is representative of the average relative abundance of each feature in the entire data.
-If \code{p.adjust.method != "none"} an additional volcano plot is created with P-values corrected with the specified method.
+\item{`'taxlevel'_volcano.pdf`}{
+A PDF file at 330dpi containing volcano plots arranged in a matrix of \code{nrow.graph} rows and \code{ncol.graph} columns.
 }
-\item{'taxlevel'_volcano.xlsx }{
+\item{`'taxlevel'_volcano.xlsx`}{
 An Excel file with three sheets:\cr
-1. The \bold{call} sheet contains the parameters passed to the function. It's useful for future edits on the code to remember which colours have been used in the plot, as well as the other graphical parameters and correction method.\cr
-2. The second sheet contains all the \bold{uncorrecred} pairwise Wilcoxon test P-values, as well as the average and SEM abundances of each taxa in each group.
-4. Same as the second, but with \bold{p.adjust.method} corrected P-values.
+1. \bold{call} sheet: contains the parameters passed to the function for reproducibility.\cr
+2. \bold{uncorrected}: Contains uncorrected pairwise Wilcoxon test p-values along with average and SEM abundances of each taxa.\cr
+3. \bold{corrected}: Same as the second sheet but with \code{p.adjust.method} corrected p-values.
 }
 }
 \author{
-Gabriele Conti - gabriele.conti12@unibo.it ; Marco Fabbrini - m.fabbrini@unibo.it
+Marco Fabbrini, Gabriele Conti
 }
 \examples{
+env <- read.delim("example data/env.tsv", header=T, row.names = 1, sep='\t')
+env$Group = factor(env$Group, levels = c("Group 1", "Group 2"))
 
-# Make sure to check in which directory you are working
-getwd()
-[1] "C:/Users/.../my_working_directory/"
+genera <- read.delim("example data/genera_example.tsv", header=T, row.names = 1, sep='\t')
+all( colnames(genera) == rownames(env) )
 
-# If you want to store your output in a subfolder of your currently working directory, first create it
-# For example:
-if( !dir.exists("Plots")){ dir.create("Plots") }
-
-
-########## Example 1 : Processing OTU tables
-
-# Phylum2 is the OTU table at L2 (clean phyla names on the rows, samples on the columns)
-# Group is a factor for grouping the samples so that:  length(group) == ncol(phylum2) & is.factor(group)
-# Make sure to have the directories created for the save path before running the script
-# the color_grouping vector must contain a matched color for each level of group:  length(color_grouping) == nlevels(group)
-# MAKE SURE TO MATCH your otu_table_L?.tsv table's sample names with the sample names of yout env or map file used to generate the group factor variable!!!!
-
-> compute_volcano_plots( data = phylum2, p.adjust.method = "bonferroni", group = group,
-                           taxlevel = "L2", save.path = "Plots" )
-
-[1] "Terraforming volcano plots.."
-[1] "Generating volcano plot for corrected P-values as well..."
-[1] "Saving stats into C:/Users/.../my_working_directory/Plots/L2_volcano.xlsx"
-[1] "Saving plots into C:/Users/.../my_working_directory/Plots/L2_volcano.pdf"
-
-
-
+compute_volcano_plots(data = genera,
+                      group = env$Group,
+                      taxlevel = "L6", 
+                      save.path = "Results/Compositional")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

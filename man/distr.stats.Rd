@@ -30,7 +30,7 @@ A \bold{numeric} vector. Can contain NAs.
 %% ~put references to the literature/web site here ~
 }
 \author{
-Marco Fabbrini - m.fabbrini@unibo.it
+Marco Fabbrini
 }
 \note{
 %%  ~~further notes~~

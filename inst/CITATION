@@ -1,0 +1,12 @@
+citHeader("If you use microbAIDeR, please cite the package using the following citation:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "microbAIDeR: An ensemble of functions for easier and quicker preliminary microbiome analysis",
+  author = c(
+    person("Marco", "Fabbrini", email = "fabbrinimarco.mf@gmail.com", role = c("aut", "cre")),
+    person("Gabriele", "Conti", role = "ctb")),
+  year = "2024",
+  note = "R package version 0.3.0",
+  url = "https://github.com/FabbriniMarco/microbAIDeR"
+)
