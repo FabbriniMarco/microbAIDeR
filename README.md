@@ -1,3 +1,8 @@
+<div align=center>
+  <img width="196" alt="Circle logo" src="https://github.com/user-attachments/assets/9953b84a-12ac-4704-84c1-678bbc92eafd" height="186">
+</div>
+
+
 # microbAIDeR - An ensemble of functions for easier and quicker preliminary microbiome analyses.
 
 microbAIDeR is a R-package made for easy preliminar microbiome analyses starting from typical 16S outputs, such as the one produced in the [16S-KrakenBracken-Pipeline](https://github.com/FabbriniMarco/16S-KrakenBracken-Pipeline). The package provides all-in-one functions for statistical analysis and graphs generation, as well as useful function for general data analyses in R.
