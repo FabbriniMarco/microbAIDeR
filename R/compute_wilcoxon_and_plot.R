@@ -136,7 +136,7 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
       } else { gvec_corr <- c(gvec_corr, list(generate_plot(tempdf, taxa, onlysig_corrected)))  }
       
     }
-    file_corrected = paste0(save.path, "/", taxlevel, "_wilcox_corrected.pdf")
+    file_corrected = paste0(save.path, "/", taxlevel, "_wilcox_", p.adjust.method,".pdf")
     message("Saving corrected boxplots to ", file_corrected)
     suppressWarnings(ggsave(
       filename = file_corrected,
