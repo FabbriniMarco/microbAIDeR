@@ -135,7 +135,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
         geom_point(pch = 21, aes(fill = Group), color = "grey10", stroke = 0.25, size = cex.points) +
         labs(x = paste("MDS1 - ", round(explained_variance_PC1*100, 2), "%", sep=""),
              y = paste("MDS2 - ", round(explained_variance_PC2*100, 2), "%", sep=""),
-             fill = "", color = "", title = "Unweighted UniFrac") +
+             fill = "", color = "", title = firstup(metrics)) +
         scale_color_manual(values = color.grouping) +
         scale_fill_manual(values = color.grouping) +
         coord_fixed() +

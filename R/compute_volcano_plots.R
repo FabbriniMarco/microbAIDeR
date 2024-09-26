@@ -168,9 +168,9 @@ compute_volcano_plots <- function(data, group, taxlevel, save.path = getwd(), p.
                                            gp = gpar(col = "grey22", lwd = arrow.lwd)), xmax = -arrow.origin.offset, xmin = min(tidata$LFC) / 1.5, ymin = 0, ymax = 0) +
         annotation_custom(grob = linesGrob(arrow = arrow(type = "open", ends = "last", length = unit(arrow.length, "mm")),
                                            gp = gpar(col = "grey22", lwd = arrow.lwd)), xmax = arrow.origin.offset, xmin = max(tidata$LFC) / 1.5, ymin = 0, ymax = 0) +
-        annotation_custom(grob = grid::textGrob(label = levels(group)[1], hjust = 1.05, gp = gpar(col = arrow.text.color, cex = arrow.text.cex)),
+        annotation_custom(grob = grid::textGrob(label = levels(group)[2], hjust = 1.05, gp = gpar(col = arrow.text.color, cex = arrow.text.cex)),
                           xmin = min(tidata$LFC) / 1.5, xmax = min(tidata$LFC) / 1.5, ymin = 0, ymax = 0) +
-        annotation_custom(grob = grid::textGrob(label = levels(group)[2], hjust = -0.05, gp = gpar(col = arrow.text.color, cex = arrow.text.cex)),
+        annotation_custom(grob = grid::textGrob(label = levels(group)[1], hjust = -0.05, gp = gpar(col = arrow.text.color, cex = arrow.text.cex)),
                           xmin = max(tidata$LFC) / 1.5, xmax = max(tidata$LFC) / 1.5, ymin = 0, ymax = 0)
     }
     

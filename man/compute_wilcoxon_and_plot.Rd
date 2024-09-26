@@ -162,12 +162,12 @@ The resulting output in the \bold{save.path} folder consist of two \emph{.pdf} f
 Note that this function performs all the possible pairwise Wilcox test comparisons between groups. If you have a lot of timepoints and feel like some comparisons are not noteworthy or biologically senseless, consider this analysis only as preliminar and evaluate your group comparisons manually and carefully.
 }
 \value{
-\item{'taxlevel'_boxplot_wilcox_uncorrected.pdf }{
+\item{'taxlevel'_wilcox_uncorrected.pdf }{
 A 330dpi PDF file with boxplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
 A single boxplot is created for each row of the starting \bold{data}, and samples are grouped according to \bold{group} levels.
 If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significant pairwise Wilcoxon comparison considering uncorrected P-values are plotted.
 }
-\item{'taxlevel'_boxplot_wilcox_'p.adjust.method'.pdf }{
+\item{'taxlevel'_wilcox_'p.adjust.method'.pdf }{
 A 330dpi PDF file with boxplots arranged in a \bold{nrow.graph} row and \bold{ncol.graph} column matrix \cr
 A single boxplot is created for each row of the starting \bold{data}, and samples are grouped according to \bold{group} levels.
 If \bold{plot.not.sig = FALSE} only boxplots with \emph{at least} one significant pairwise Wilcoxon comparison according to corrected P-values are plotted.
