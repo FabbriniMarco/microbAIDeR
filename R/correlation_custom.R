@@ -66,13 +66,11 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
   cortab[is.na(cortab)] <- 0
   ptab[is.nan.data.frame(ptab)]  <-  1
   cortab[is.nan.data.frame(cortab)]  <-  0
-  if ( all(dim(cortab) < c(2,2)) )
+  if ( all(dim(cortab) < c(1,1)) )
   {
     return( list(uncorr_correlation=as.data.frame(cortab), uncorr_pvalues = as.data.frame(ptab)) )
     stop("No valid correlations. All correlations returned NAs. Check your data.")
   }
-  uncorr_cortab = cortab
-  uncorr_ptab = ptab
   # Filter on uncorrected p-values
   nosig_tax <- rowSums(ptab < uncorr.p.threshold) == 0
   ptab <- ptab[!nosig_tax, , drop = FALSE]
@@ -80,11 +78,13 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
   nosig_param <- colSums(ptab < uncorr.p.threshold) == 0
   ptab <- ptab[, !nosig_param, drop = FALSE]
   cortab <- cortab[, !nosig_param, drop = FALSE]
-  if ( all(dim(cortab) < c(2,2)) )
+  if ( all(dim(cortab) < c(1,1)) )
   {
     return( list(uncorr_correlation=cortab, uncorr_pvalues = ptab) )
     stop("No significant correlations even without correcting pvals.")
   }
+  uncorr_cortab = cortab
+  uncorr_ptab = ptab
   # Filter on corrected p-values
   p2 = ptab
   c2 = cortab

@@ -88,7 +88,7 @@ If \code{arrows == TRUE} the line width of the arrow and arrowhead (Default = 1.
 If \code{arrows == TRUE} the horizontal offset of the arrows in respect to the \code{x=0} position (Default = 0.5).
 }
   \item{arrow.text.cex}{
-If \code{arrows == TRUE} the size of the text at the extremity of the arrows (Default = 7).
+If \code{arrows == TRUE} the size of the text at the extremity of the arrows (Default = 0.7).
 }
   \item{arrow.text.color}{
 If \code{arrows == TRUE} the color of the text at the extremity of the arrows (Default = "grey22").

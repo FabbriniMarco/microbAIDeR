@@ -15,11 +15,11 @@ compute_beta_diversity(beta.folder.path = paste(getwd(), "RESULTS/beta_diversity
         beta_metrics = c("braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"), \cr
         mds = c(1, 2), adonis_n_perm = 9999, \cr
         adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr", \cr
-        alpha.points=1, spiders = FALSE, spiders.lwd = 1.5,  \cr
+        alpha.points=1, spiders = FALSE, spiders.lwd = 1,  \cr
         ellipses = FALSE, ellipse.focus = FALSE, ellipse.fill = FALSE, \cr
-        ellipse.lwd = 1.2, ellipse.conf = 0.95, ellipse.alpha = 0.45, manual.bordercol = NULL,\cr
-        svg.width = 7, svg.height = 5, \cr
-        cex.points = 1.2, width.graph = 6, height.graph = 4, \cr
+        ellipse.lwd = 1, ellipse.conf = 0.95, ellipse.alpha = 0.45, manual.bordercol = NULL,\cr
+        svg.width = 5, svg.height = 3, \cr
+        cex.points = 1, width.graph = 6, height.graph = 4, \cr
         ggplot.margins = c(0.15, 0.15, 0.15, 0.6), \cr
         nrow.graph = 2, ncol.graph = 2, \cr
         text.x.size = 8, text.y.size = 7, text.title.size = 9, \cr
@@ -77,7 +77,7 @@ A \bold{numeric} value handling points fill transparency in plots (Default = 1 -
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with spiders.
 }
   \item{spiders.lwd}{
-A \bold{numeric} (Default = 1.5), specifying the line width for PCoA spiders.
+A \bold{numeric} (Default = 1), specifying the line width for PCoA spiders.
 }
   \item{ellipses}{
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with ellipses (just the border, no fill). Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level.
@@ -89,7 +89,7 @@ A \bold{logical} (Default = FALSE), specifying whether to produce an additional 
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with filled ellipses and normal-size data points. Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level.
 }
   \item{ellipse.lwd}{
-A \bold{numeric} (Default = 1.2), specifying the line width for PCoA ellipses and ellipses.focus (not affecting ellipse.fill).
+A \bold{numeric} (Default = 1), specifying the line width for PCoA ellipses and ellipses.focus (not affecting ellipse.fill).
 }
   \item{ellipse.conf}{
 A \bold{numeric} value passing ellipse confidence level for the eventual ellipses plot (Default = 0.95).
@@ -101,13 +101,13 @@ A \bold{numeric} value handling ellipse fill transparency in plots (Default = 0.
 If NULL, ellipse border colors are assigned from the \emph{color.grouping} variable. If a single \bold{character} value is specified, all ellipses border are colored accordingly (Default = NULL).
 }
   \item{svg.width}{
-\bold{numeric} value of the width for output PCoA plots in scalable vector graphics format (Default = 7).
+\bold{numeric} value of the width for output PCoA plots in scalable vector graphics format (Default = 5).
 }
   \item{svg.height}{
-\bold{numeric} value of the height for output PCoA plots in scalable vector graphics format (Default = 5).
+\bold{numeric} value of the height for output PCoA plots in scalable vector graphics format (Default = 3).
 }
   \item{cex.points}{
-A \bold{numeric} value passing the size of PCoA data points.
+A \bold{numeric} value passing the size of PCoA data points (Default = 1).
 }
   \item{width.graph}{
 A \bold{numerical} value specifying the width of intra-group beta barplots (Default = 6).

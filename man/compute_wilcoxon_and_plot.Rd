@@ -62,10 +62,10 @@ Number of rows of the output .pdf file (Default = 2). Used to group multiple box
 Number of columns of the output .pdf file (Default = 2). Used to group multiple boxplots in the same sheet.
 }
   \item{width.graph}{
-A \bold{numerical} value specifying the width of each boxplot (Default = 6).
+A \bold{numerical} value specifying the width of each boxplot (Default = 4.5).
 }
   \item{height.graph}{
-A \bold{numerical} value specifying the height of each boxplot (Default = 4).
+A \bold{numerical} value specifying the height of each boxplot (Default = 3.5).
 }
   \item{horiz}{
 A \bold{logical} (Default = FALSE), specifying whether to plot horizontal boxplots.

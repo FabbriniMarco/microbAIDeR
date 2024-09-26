@@ -1,8 +1,8 @@
 compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "unweighted_unifrac", "weighted_unifrac"),
                                    save.path = getwd(), adonis_n_perm = 9999, beta.folder.path = paste(getwd(), "RESULTS/beta_diversity", sep="/"), manual.beta.path = NULL, sample.list, mds = c(1,2), group, color.grouping ,
-                                   alpha.points = 1, spiders = FALSE, spiders.lwd = 1.5, ellipses = FALSE, ellipse.focus = FALSE,ellipse.fill = FALSE, ellipse.conf = 0.95, ellipse.alpha = 0.45 , ellipse.lwd = 1.2, manual.bordercol = NULL,
-                                   svg.width = 7, svg.height = 5,
-                                   cex.points = 1.2, adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr",
+                                   alpha.points = 1, spiders = FALSE, spiders.lwd = 1, ellipses = FALSE, ellipse.focus = FALSE,ellipse.fill = FALSE, ellipse.conf = 0.95, ellipse.alpha = 0.45 , ellipse.lwd = 1, manual.bordercol = NULL,
+                                   svg.width = 5, svg.height = 3,
+                                   cex.points = 1, adonis.p.adjust = "fdr", wilcoxon.p.adjust = "fdr",
                                    nrow.graph = 2, ncol.graph = 2, width.graph = 6, height.graph = 4, ggplot.margins = c(0.15, 0.15, 0.15, 0.6),
                                    text.x.size = 8, text.y.size = 7,  text.title.size = 9,
                                    additional.params=NULL, use.ggplot = TRUE, additional.params.beta=NULL){
