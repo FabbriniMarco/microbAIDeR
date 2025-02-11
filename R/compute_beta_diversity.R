@@ -67,9 +67,9 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
     
     if( !use.ggplot ){
       plot_beta <- function(save.path, metrics, plot_type, metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2,
-                            color.grouping, cex.points, spiders = FALSE, ellipses = FALSE, ellipse.focus = FALSE, 
-                            ellipse.fill = FALSE, svg.width = 7, svg.height = 5, spiders.lwd = 1.5, ellipse.conf = 0.95, 
-                            ellipse.lwd = 2.5, ellipse.alpha = 0.75, manual.bordercol = NULL) {
+                            color.grouping, cex.points, spiders, ellipses, ellipse.focus, 
+                            ellipse.fill, svg.width, svg.height, spiders.lwd, ellipse.conf, 
+                            ellipse.lwd, ellipse.alpha, manual.bordercol) {
         file_name <- switch(plot_type,
                             "base" = paste0(save.path, "/", metrics, ".svg"),
                             "spiders" = paste0(save.path, "/", metrics, "_spiders.svg"),
@@ -95,7 +95,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
                         show.groups = groupiter, 
                         col = color.grouping[which(levels(group_beta) == groupiter)], 
                         border = if (is.null(manual.bordercol)) color.grouping[which(levels(group_beta) == groupiter)] else manual.bordercol, 
-                        lwd = ellipse.lwd, alpha = if (plot_type == "ellipse_fill" || plot_type == "ellipse_focus") ellipse.alpha else 50)
+                        lwd = ellipse.lwd, alpha = if (plot_type == "ellipse_fill" || plot_type == "ellipse_focus") ellipse.alpha else 0.50)
           }
         }
         legend("topright", legend = levels(group_beta), pt.cex = 1, fill = color.grouping, horiz = FALSE,
@@ -103,7 +103,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
         graphics.off()
       }
       # Base plot
-      plot_beta(save.path, metrics, "base", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points)
+      plot_beta(save.path, metrics, "base", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, )
       # Spider plot
       if (spiders) {
         plot_beta(save.path, metrics, "spiders", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, spiders.lwd = spiders.lwd, spiders = TRUE)
@@ -148,7 +148,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       if (ellipses) {
         graphy <- graphy +
           geom_polygon(data = ellipse_data, aes(x = PC1, y = PC2, group = Group), fill = NA, color = "grey10", linewidth = ellipse.lwd) +
-          geom_polygon(data = ellipse_data, aes(x = PC1, y = PC2, fill = Group, color = Group), alpha = ellipse.alpha/100)
+          geom_polygon(data = ellipse_data, aes(x = PC1, y = PC2, fill = Group, color = Group), alpha = ellipse.alpha)
         svglite(paste0(save.path, "/", metrics, "_ggplot_ellipses.svg") , width = svg.width, height = svg.height)
         print(graphy)
         graphics.off()
