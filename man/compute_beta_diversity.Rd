@@ -80,7 +80,7 @@ A \bold{logical} (Default = FALSE), specifying whether to produce an additional 
 A \bold{numeric} (Default = 1), specifying the line width for PCoA spiders.
 }
   \item{ellipses}{
-A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with ellipses (just the border, no fill). Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level.
+A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with ellipses. Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level. If \bold{use.ggplot = TRUE}, ellipse fill is handled only by the \bold{ellipse.alpha} parameter, producing a single PCoA with ellipses (either filled or not filled depending on alpha value) and the \bold{ellipse.fill} parameter is ignored. 
 }
   \item{ellipse.focus}{
 A \bold{logical} (Default = FALSE), specifying whether to produce an additional PCoA plot with filled ellipses and much smaller points (ideal for huge datasets (> 800 points). Note that ellipses are computed with the "se" method at \bold{ellipse.conf} confidence level.
@@ -95,7 +95,7 @@ A \bold{numeric} (Default = 1), specifying the line width for PCoA ellipses and 
 A \bold{numeric} value passing ellipse confidence level for the eventual ellipses plot (Default = 0.95).
 }
   \item{ellipse.alpha}{
-A \bold{numeric} value handling ellipse fill transparency in plots (Default = 0.45).
+A \bold{numeric} value handling ellipse fill transparency in plots (Default = 0.45). If \bold{use.ggplot = TRUE}, to plot transparent ellipses set the value to 0.
 }
   \item{manual.bordercol}{
 If NULL, ellipse border colors are assigned from the \emph{color.grouping} variable. If a single \bold{character} value is specified, all ellipses border are colored accordingly (Default = NULL).

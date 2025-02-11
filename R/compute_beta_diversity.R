@@ -149,10 +149,10 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
         graphy <- graphy +
           geom_polygon(data = ellipse_data, aes(x = PC1, y = PC2, group = Group), fill = NA, color = "grey10", linewidth = ellipse.lwd) +
           geom_polygon(data = ellipse_data, aes(x = PC1, y = PC2, fill = Group, color = Group), alpha = ellipse.alpha/100)
+        svglite(paste0(save.path, "/", metrics, "_ggplot_ellipses.svg") , width = svg.width, height = svg.height)
+        print(graphy)
+        graphics.off()
       }
-      svglite(paste0(save.path, "/", metrics, "_ggplot_ellipses.svg") , width = svg.width, height = svg.height)
-      print(graphy)
-      graphics.off()
       
       if (spiders) {
         centroids <- pcoa_df %>%
