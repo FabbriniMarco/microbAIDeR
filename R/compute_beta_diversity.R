@@ -66,10 +66,29 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
     if( alpha.points < 1 ){ color_beta = scales::alpha(color_beta, alpha.points) }
     
     if( !use.ggplot ){
-      plot_beta <- function(save.path, metrics, plot_type, metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2,
-                            color.grouping, cex.points, spiders, ellipses, ellipse.focus, 
-                            ellipse.fill, svg.width, svg.height, spiders.lwd, ellipse.conf, 
-                            ellipse.lwd, ellipse.alpha, manual.bordercol) {
+      plot_beta <- function(save.path = save.path,
+                            metrics,
+                            plot_type,
+                            metric_beta,
+                            coord_beta,
+                            color_beta,
+                            group_beta,
+                            mds = mds,
+                            sig1,
+                            sig2,
+                            color.grouping = color.grouping,
+                            cex.points = cex.points,
+                            spiders = spiders,
+                            ellipses = ellipses,
+                            ellipse.focus = ellipse.focus,
+                            ellipse.fill = ellipse.fill,
+                            svg.width = svg.width,
+                            svg.height = svg.height,
+                            spiders.lwd = spiders.lwd,
+                            ellipse.conf = ellipse.conf,
+                            ellipse.lwd = ellipse.lwd,
+                            ellipse.alpha = ellipse.alpha,
+                            manual.bordercol = manual.bordercol) {
         file_name <- switch(plot_type,
                             "base" = paste0(save.path, "/", metrics, ".svg"),
                             "spiders" = paste0(save.path, "/", metrics, "_spiders.svg"),
@@ -102,8 +121,9 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
                x.intersp = 0.4, y.intersp = 0.7, bty = "n", cex = 0.8)
         graphics.off()
       }
+      
       # Base plot
-      plot_beta(save.path, metrics, "base", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, )
+      plot_beta(save.path, metrics, "base", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points )
       # Spider plot
       if (spiders) {
         plot_beta(save.path, metrics, "spiders", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, spiders.lwd = spiders.lwd, spiders = TRUE)
