@@ -12,7 +12,7 @@ generate_random_colors <- function(x, start.col = "grey90", seed = 1996, show.co
   if (show.colors == TRUE) {
     par(mgp = c(3, 0.2, 0))
     barplot(rep(1, x), col = colori, border = NA,
-            main = paste(n_colors, "Distinct Random Colors"), 
+            main = paste(x, "Distinct Random Colors"), 
             names.arg = 1:x, yaxt = "n", cex.names = 0.6)
   }
   return(colori)
