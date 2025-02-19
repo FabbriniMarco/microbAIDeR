@@ -2,7 +2,7 @@ microbAIDeR_install_dependancies <- function(lib = .libPaths()[1]){
   cran_packages <- c('devtools', 'parallel', 'doParallel', 'openxlsx', 
                      'tidyr', 'tibble', 'dplyr', 'ggplot2', 'ggsignif', 
                      'gridExtra', 'tidyverse', 'stringr', 'vegan', 
-                     'cowplot', 'ggpattern', 'gtable', 'grid', 'ggrepel', 'scales', 'svglite')
+                     'cowplot', 'ggpattern', 'gtable', 'grid', 'ggrepel', 'scales', 'svglite', 'RColorBrewer')
   install_dependencies <- function(packages, lib) {
     for (package in packages) {
       if (!requireNamespace(package, quietly = TRUE)) {

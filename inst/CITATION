@@ -6,7 +6,7 @@ bibentry(
   author = c(
     person("Marco", "Fabbrini", email = "fabbrinimarco.mf@gmail.com", role = c("aut", "cre")),
     person("Gabriele", "Conti", role = "ctb")),
-  year = "2024",
-  note = "R package version 0.3.1",
+  year = "2025",
+  note = "R package version 0.3.2",
   url = "https://github.com/FabbriniMarco/microbAIDeR"
 )
