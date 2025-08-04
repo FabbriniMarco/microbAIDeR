@@ -56,11 +56,13 @@ correlation_custom <- function(feature_data, parameter_data, is.binary.parameter
   colnames(cortab) <- colnames(parameter_data)
   rownames(ptab) <- colnames(feature_data)
   colnames(ptab) <- colnames(parameter_data)
+  
   # Remove columns/rows with all NAs
-  cortab <- cortab[, colSums(is.na(ptab)) < nrow(ptab)]
-  ptab <- ptab[, colSums(is.na(ptab)) < nrow(ptab)]
-  cortab <- cortab[rowSums(is.na(ptab)) < ncol(ptab), ]
-  ptab <- ptab[rowSums(is.na(ptab)) < ncol(ptab), ]
+  cortab <- cortab[, colSums(is.na(ptab)) < nrow(ptab), drop = FALSE]
+  ptab <- ptab[, colSums(is.na(ptab)) < nrow(ptab), drop = FALSE]
+  cortab <- cortab[rowSums(is.na(ptab)) < ncol(ptab), , drop = FALSE]
+  ptab <- ptab[rowSums(is.na(ptab)) < ncol(ptab), , drop = FALSE]
+  
   # Substitute NA and NaNs
   ptab[is.na(ptab)] <- 1
   cortab[is.na(cortab)] <- 0
