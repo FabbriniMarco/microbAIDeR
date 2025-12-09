@@ -78,10 +78,6 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
                             sig2,
                             color.grouping = color.grouping,
                             cex.points = cex.points,
-                            spiders = spiders,
-                            ellipses = ellipses,
-                            ellipse.focus = ellipse.focus,
-                            ellipse.fill = ellipse.fill,
                             svg.width = svg.width,
                             svg.height = svg.height,
                             spiders.lwd = spiders.lwd,
@@ -102,14 +98,14 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
         with(coord_beta, points(AX1, AX2, pch = 21, bg = color_beta, cex = cex.points, col = NULL))
         if (plot_type == "spiders") {
           for (groupiter in levels(group_beta)) {
-            ordispider(metric_beta, group_beta, display = "sites", spiders = "centroid", 
+            vegan::ordispider(metric_beta, group_beta, display = "sites", spiders = "centroid", 
                        show.groups = groupiter, 
                        col = if (is.null(manual.bordercol)) color.grouping[which(levels(group_beta) == groupiter)] else manual.bordercol, 
                        lwd = spiders.lwd)
           }
         } else if (plot_type == "ellipse" || plot_type == "ellipse_focus" || plot_type == "ellipse_fill") {
           for (groupiter in levels(group_beta)) {
-            ordiellipse(metric_beta, group_beta, display = "sites", kind = "se", conf = ellipse.conf, 
+            vegan::ordiellipse(metric_beta, group_beta, display = "sites", kind = "se", conf = ellipse.conf, 
                         draw = if (plot_type == "ellipse") "lines" else "polygon", 
                         show.groups = groupiter, 
                         col = color.grouping[which(levels(group_beta) == groupiter)], 
@@ -126,7 +122,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       plot_beta(save.path, metrics, "base", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points )
       # Spider plot
       if (spiders) {
-        plot_beta(save.path, metrics, "spiders", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, spiders.lwd = spiders.lwd, spiders = TRUE)
+        plot_beta(save.path, metrics, "spiders", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, spiders.lwd = spiders.lwd)
       }
       # Ellipse plot
       if (ellipses) {
@@ -140,7 +136,8 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       if (ellipse.fill) {
         plot_beta(save.path, metrics, "ellipse_fill", metric_beta, coord_beta, color_beta, group_beta, mds, sig1, sig2, color.grouping, cex.points, ellipse.conf = ellipse.conf, ellipse.lwd = ellipse.lwd, ellipse.alpha = ellipse.alpha)
       }
-    } else {
+    } else { 
+      #### USE GGPLOT ####
       # Plot the PCoA using ggplot with ellipses (if requested)
       beta.pcoa <- cmdscale(as.dist(beta), eig=TRUE, k=max(mds))
       eigenvalues <- beta.pcoa$eig
@@ -148,7 +145,7 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       explained_variance_PC1 <- explained_variance[1]
       explained_variance_PC2 <- explained_variance[2]
       pcoa_df <- data.frame(PC1 = beta.pcoa$points[,mds[1]], PC2 = beta.pcoa$points[,mds[2]], Group = group)
-      ellipse_data <- pcoa_df %>% group_by(Group) %>% do(calc_ellipse(., level=ellipse.conf))
+      ellipse_data <- pcoa_df %>% group_by(Group) %>% do(microbAIDeR::calc_ellipse(., level=ellipse.conf))
       if(ellipse.lwd > 2){message("WARNING: Setting an ellipse.lwd value over 2 with ggplot results in very thick ellipse borders")}
       
       graphy <- ggplot(pcoa_df, aes(x = PC1, y = PC2, color = Group)) +
@@ -158,7 +155,6 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
              fill = "", color = "", title = firstup(metrics)) +
         scale_color_manual(values = color.grouping) +
         scale_fill_manual(values = color.grouping) +
-        coord_fixed() +
         theme_minimal() +
         {if (!is.null(additional.params.beta)) additional.params.beta}
       svglite(paste0(save.path, "/", metrics, "_ggplot.svg") , width = svg.width, height = svg.height)
@@ -176,20 +172,19 @@ compute_beta_diversity <- function(beta_metrics = c("braycurtis", "jaccard", "un
       
       if (spiders) {
         centroids <- pcoa_df %>%
-          group_by(Group) %>%
-          summarize(PC1_centroid = mean(PC1), PC2_centroid = mean(PC2))
+          dplyr::group_by(Group) %>%
+          dplyr::summarize(PC1_centroid = mean(PC1), PC2_centroid = mean(PC2))
         pcoa_df <- pcoa_df %>%
-          left_join(centroids, by = "Group")
+          dplyr::left_join(centroids, by = "Group")
         
         graphy <- ggplot(pcoa_df, aes(x = PC1, y = PC2, color = Group)) +
-          geom_segment(aes(xend = PC1_centroid, yend = PC2_centroid, color = Group), size = 0.5) +
+          geom_segment(aes(xend = PC1_centroid, yend = PC2_centroid, color = Group), linewidth = 0.5) +
           geom_point(pch = 21, aes(fill = Group), color = "grey10", stroke = 0.25, size = cex.points) +
           labs(x = paste("MDS1 - ", round(explained_variance_PC1*100, 2), "%", sep=""),
                y = paste("MDS2 - ", round(explained_variance_PC2*100, 2), "%", sep=""),
                fill = "", color = "", title = firstup(metrics)) +
           scale_color_manual(values = color.grouping) +
           scale_fill_manual(values = color.grouping) +
-          coord_fixed() +
           theme_minimal() +
           {if (!is.null(additional.params.beta)) additional.params.beta}
         
