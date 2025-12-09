@@ -1,7 +1,7 @@
 microbAIDeR_install_dependancies <- function(lib = .libPaths()[1]){
   cran_packages <- c('devtools', 'parallel', 'doParallel', 'openxlsx', 
                      'tidyr', 'tibble', 'dplyr', 'ggplot2', 'ggsignif', 
-                     'gridExtra', 'tidyverse', 'stringr', 'vegan', 
+                     'gridExtra', 'tidyverse', 'stringr', 'vegan', 'glmmTMB','emmeans','tibble',
                      'cowplot', 'ggpattern', 'gtable', 'grid', 'ggrepel', 'scales', 'svglite', 'RColorBrewer')
   install_dependencies <- function(packages, lib) {
     for (package in packages) {

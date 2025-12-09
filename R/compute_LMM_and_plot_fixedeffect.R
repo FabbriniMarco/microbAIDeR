@@ -1,10 +1,10 @@
-compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd(), color.grouping, comparison.list = NULL, p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE,
-                                      paired = FALSE, nrow.graph = 2, ncol.graph = 2, width.graph = 4.5, height.graph = 3.5, horiz = FALSE, ggplot.margins = c(.18, .18, .18, .6),
-                                      box.lwd = 0.4, jitter.pch = 21, jitter.stroke = 0.15, jitter.size = 0.7, jitter.color = "grey22",
-                                      signif.step.increase = 0.12, signif.text.size = 3, signif.line.size = 0.4, contrast.color = "ivory1",
-                                      text.x.size = 6, text.y.size = 6, text.y.title.size = 8, smoothing = FALSE, smoothing.lwd = 1, smoothing.color = "darkred", smoothing.se = FALSE, 
-                                      smoothing.method="loess", additional.params = NULL, align.legend = FALSE, plot.order = "kruskal", pattern.fill = FALSE, pattern = "stripe",
-                                      pattern.angle = 45, pattern.alpha = 0.4, pattern.density = 0.1, pattern.spacing = 0.05) {
+compute_LMM_and_plot_rdm_fix <- function(data, group, taxlevel, save.path = getwd(), color.grouping, comparison.list = NULL, p.adjust.method = "fdr", trends = TRUE, plot.not.sig = FALSE,
+                                 paired = FALSE, nrow.graph = 2, ncol.graph = 2, width.graph = 4.5, height.graph = 3.5, horiz = FALSE, ggplot.margins = c(.18, .18, .18, .6),
+                                 box.lwd = 0.4, jitter.pch = 21, jitter.stroke = 0.15, jitter.size = 0.7, jitter.color = "grey22",
+                                 signif.step.increase = 0.12, signif.text.size = 3, signif.line.size = 0.4, contrast.color = "ivory1",
+                                 text.x.size = 6, text.y.size = 6, text.y.title.size = 8, smoothing = FALSE, smoothing.lwd = 1, smoothing.color = "darkred", smoothing.se = FALSE, 
+                                 smoothing.method="loess", additional.params = NULL, align.legend = FALSE, plot.order = "kruskal", pattern.fill = FALSE, pattern = "stripe",
+                                 pattern.angle = 45, pattern.alpha = 0.4, pattern.density = 0.1, pattern.spacing = 0.05, covar_fix = NULL, covar_rdm) {
   check_and_load_package("dplyr")
   check_and_load_package("ggplot2")
   check_and_load_package("ggsignif")
@@ -12,6 +12,7 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
   check_and_load_package("tidyverse")
   check_and_load_package("tidyr")
   check_and_load_package("openxlsx")
+  check_and_load_package("lmerTest")
   if (pattern.fill) check_and_load_package("ggpattern")
   
   microbAIDeR::mkdir(save.path)
@@ -23,15 +24,26 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
   
   if (ncol(data) == 0) stop("No samples remaining after filtering NAs from the grouping factor. Check your grouping factor")
   if (nrow(data) == 0) stop("No features remaining after filtering features with 0 abundance across all samples. Check your data")
+  if (any(is.na(covar_rdm))) stop("NAs in covar_rdm table, ensure to provide an NA free table")
+  if (!is.null(covar_fix) & any(is.na(covar_fix))) stop("NAs in covar_fix table, ensure to provide an NA free table")
   if (!p.adjust.method %in% p.adjust.methods) stop("Supplied an invalid value to p.adjust.method parameter.")
   if (!plot.order %in% c("kruskal", "rownames")) stop("Invalid value supplied to plot.order parameter. Can either be 'kruskal' or 'rownames'")
   
+  if (is.null(covar_fix)) {
+    formula <- as.formula(paste0("abundances ~ grouping_column + ", paste0("(1 | ", colnames(covar_rdm), ")", collapse = " + ")))
+  } else {
+    formula <- as.formula(paste0("abundances ~ grouping_column + ",
+                                 paste0(colnames(covar_fix), collapse = " + "), " + ",
+                                 paste0("(1 | ", colnames(covar_rdm), ")", collapse = " + ")))
+  }
+  message("glmmTMB formula = ", format(formula))
   call.print = as.data.frame(rbind(p.adjust.method, taxlevel, save.path, color.grouping = paste(color.grouping, collapse = ", "), smoothing.color, contrast.color,
                                    comparison.list = paste(sapply(comparison.list, function(x) paste(x, collapse = " vs ")), collapse=","),
                                    nrow.graph , ncol.graph , width.graph , height.graph , ggplot2.margins = paste(ggplot.margins, collapse = ", ") ,
                                    box.lwd , jitter.pch , jitter.stroke , jitter.size , jitter.color ,
                                    signif.step.increase,  signif.text.size ,
-                                   text.x.size , text.y.size ,  text.y.title.size, additional.params=paste(additional.params, collapse=", ")
+                                   text.x.size , text.y.size ,  text.y.title.size, additional.params=paste(additional.params, collapse=", "),
+                                   formula=paste0(format(formula))
   ))
   output_excel_path = paste(save.path, "/", taxlevel, "_wilcoxon_pairwise.xlsx", sep="")
   write.xlsx( call.print , output_excel_path, sheetName = "call", colNames = FALSE, rowNames = TRUE)
@@ -70,15 +82,31 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
   
   
   for (taxa in rownames(data)) {
-    tempdf <- data.frame(abundances = as.numeric(data[taxa, ]), grouping_column = group)
-    test_pvalues <- sapply(comparison.list, function(confr) suppressWarnings(wilcox.test(tempdf$abundances[tempdf$grouping_column == confr[1]], tempdf$abundances[tempdf$grouping_column == confr[2]], paired = paired)$p.value))
-    test_pvalues[is.na(test_pvalues) | is.infinite(test_pvalues)] <- 1
+    tempdf <- data.frame(abundances = as.numeric(data[taxa, ]), grouping_column = group, row.names = colnames(data))
+    if (is.null(covar_fix)){
+      tempdf <- merge(tempdf, covar_rdm, by="row.names")
+      # formula <- as.formula(paste0("abundances ~ grouping_column + ", paste0("(1 | ", colnames(covar_rdm), ")", collapse = " + ")))
+      
+      wtests <- sapply(comparison.list, function(confr) as.data.frame(summary(suppressMessages(suppressWarnings(
+        glmmTMB::glmmTMB(formula = formula, data = tempdf[tempdf$grouping_column %in% confr,], REML = FALSE ))))$coefficients$cond)$`Pr(>|z|)`[2])
+      
+    } else {
+      tempdf <- merge(merge(tempdf, covar_rdm, by="row.names"), covar_fix, by="row.names")
+      # formula <- as.formula(paste0("abundances ~ grouping_column + ",
+      #                              paste0(colnames(covar_fix), collapse = " + "), " + ",
+      #                              paste0("(1 | ", colnames(covar_rdm), ")", collapse = " + ")))
+      
+      wtests <- sapply(comparison.list, function(confr) as.data.frame(summary(suppressMessages(suppressWarnings(
+        glmmTMB::glmmTMB(formula = formula, data = tempdf[tempdf$grouping_column %in% confr,], REML = FALSE ))))$coefficients$cond)$`Pr(>|z|)`[2])
+    }
+     
+    wtests[is.na(wtests) | is.infinite(wtests)] <- 1
     
-    if (any(test_pvalues <= p_threshold)){
-      onlysig = data.frame(V1 = unlist(lapply(comparison.list[test_pvalues <= p_threshold], paste, collapse = " vs ")), V2 = round(test_pvalues[test_pvalues <= p_threshold], 5))
+    if (any(wtests <= p_threshold)){
+      onlysig = data.frame(V1 = unlist(lapply(comparison.list[wtests <= p_threshold], paste, collapse = " vs ")), V2 = round(wtests[wtests <= p_threshold], 5))
     } else { onlysig = NULL }
     
-    ptab[taxa, 1:length(comparison.list)] <- signif(test_pvalues, 3)
+    ptab[taxa, 1:length(comparison.list)] <- signif(wtests, 3)
     for (lvl in levels(group)) {
       ptab[taxa, paste("Mean", lvl)] <- signif(mean(tempdf$abundances[tempdf$grouping_column == lvl], na.rm = TRUE), 3)
       ptab[taxa, paste("SEM", lvl)] <- signif(microbAIDeR::sem(tempdf$abundances[tempdf$grouping_column == lvl]), 3)
@@ -90,7 +118,7 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
     { if ( plot.not.sig ) { gvec <- c(gvec, list(generate_plot(tempdf, taxa, onlysig))) } else { next }
     } else { gvec <- c(gvec, list(generate_plot(tempdf, taxa, onlysig)))  }
   }
-  file_uncorrected = paste0(save.path, "/", taxlevel, "_wilcox_uncorrected.pdf")
+  file_uncorrected = paste0(save.path, "/", taxlevel, "_glmmTMB_uncorrected.pdf")
   message("Saving uncorrected boxplots to ", file_uncorrected)
   suppressWarnings(ggsave(
     filename = file_uncorrected,
@@ -136,7 +164,7 @@ compute_wilcoxon_and_plot <- function(data, group, taxlevel, save.path = getwd()
       } else { gvec_corr <- c(gvec_corr, list(generate_plot(tempdf, taxa, onlysig_corrected)))  }
       
     }
-    file_corrected = paste0(save.path, "/", taxlevel, "_wilcox_", p.adjust.method,".pdf")
+    file_corrected = paste0(save.path, "/", taxlevel, "_glmmTMB_", p.adjust.method,".pdf")
     message("Saving corrected boxplots to ", file_corrected)
     suppressWarnings(ggsave(
       filename = file_corrected,
